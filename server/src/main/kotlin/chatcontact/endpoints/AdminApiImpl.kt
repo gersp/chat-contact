@@ -1,7 +1,9 @@
 package chatcontact.endpoints
 
 import chatcontact.api.AdminApiService
+import org.springframework.stereotype.Service
 
+@Service
 class AdminApiImpl : AdminApiService {
 
 
