@@ -1,0 +1,24 @@
+import { createMuiTheme } from '@material-ui/core';
+
+import palette from './palette';
+import typography from './typography';
+import overrides from './overrides';
+
+const theme = createMuiTheme({
+  palette,
+  typography,
+  overrides,
+  zIndex: {
+    appBar: 1200,
+    drawer: 1100,
+  },
+  topLogo: '/images/eventos/logo.png',
+  topLogoWidth: '170px',
+  topIcon: '/images/eventos/favicon_16.ico',
+  appBarColor: 'primary',
+  documentTitle: 'Eventos42',
+  registrationAvailable: true,
+  chatIcon: true
+});
+
+export default theme;

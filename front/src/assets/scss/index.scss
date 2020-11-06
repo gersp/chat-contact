@@ -1,0 +1,65 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #f7f7f7;
+}
+
+a {
+  text-decoration: none;
+}
+
+#root {
+  height: 100%;
+}
+
+.rastjazka {
+  color: white;
+  position: absolute;
+  z-index: 2000;
+  width: 100%;
+  text-align: center;
+  height: 64px;
+  padding-top: 20px;
+  &-error {
+    background: firebrick;
+  }
+  &-warn {
+    background: chocolate;
+  }
+
+  &.remove {
+    margin-top: -100px;
+  }
+}
+
+.justwidget--asst-pic {
+  width: 90px !important;
+  height: 90px !important;
+  top: 20px !important;
+  background-image: url('../images/zenbot_icon.svg') !important;
+}
+
+.justwidget--asst-pic-waves {
+  border: 55px solid rgb(74, 144, 226) !important;
+  right: -19px !important;
+  top: 10px !important;
+}
+
+.justwidget--asst-pic svg {
+  display: none;
+}
