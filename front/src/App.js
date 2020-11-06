@@ -55,23 +55,13 @@ const isProduction = window.location.hostname === 'app.eventos42.ru';
 
 export default class App extends Component {
   componentDidMount() {
-    const theme = selectTheme();
 
-    let zenBot = document.createElement('script');
-    zenBot.async = true;
     if (isProduction) {
       browserHistory.listen(location => {
         ym('hit', location.pathname);
       });
-      zenBot.src =
-        'https://zenbot-dev.just-ai.com/chatadapter/chatwidget/aemwWjyV:1a90845d40e6d0a0adb950b05c539053868dd963/justwidget.js';
-    } else {
-      zenBot.src =
-        'https://zenbot-dev.just-ai.com/chatadapter/chatwidget/AItFWCsw:156c5ea2102b18471b60c9e337c790f4817ac5ce/justwidget.js';
-    }
-    if (theme.chatIcon) {
-      document.body.appendChild(zenBot);
-    }
+    } 
+
   }
 
   render() {
