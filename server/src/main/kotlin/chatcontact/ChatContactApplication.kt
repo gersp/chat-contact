@@ -10,9 +10,9 @@ object Dev {
     @JvmStatic
     fun main(args: Array<String>) {
         System.setProperty("spring.profiles.active", "dev,local")
-        System.setProperty("spring.config.location", "server/src/chatcontact.main/conf/")
-        System.setProperty("config.location", "server/src/chatcontact.main/conf/")
-        System.setProperty("logging.config", "server/src/chatcontact.main/conf/logback.xml")
+        System.setProperty("spring.config.location", "server/src/main/conf/")
+        System.setProperty("config.location", "server/src/main/conf/")
+        System.setProperty("logging.config", "server/src/main/conf/logback.xml")
 
         chatcontact.main(args)
     }
