@@ -15,7 +15,7 @@ const theme = createMuiTheme({
   topLogo: '/images/default/logo--white.svg',
   topIcon: '/images/default/favicon.ico',
   appBarColor: 'primary',
-  documentTitle: 'Eventos42',
+  documentTitle: 'ChatContact',
   registrationAvailable: true,
 });
 
