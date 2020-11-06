@@ -1,0 +1,19 @@
+@font-face {
+  font-family: 'PT Sans';
+  src: url('/fonts/PTS55F.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'PT Sans Caption';
+  src: url('/fonts/PTC55F.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'PT Sans Narrow';
+  src: url('/fonts/PTN57F.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto-Regular.ttf') format('truetype');
+}
