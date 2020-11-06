@@ -37,13 +37,13 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.dir}/chatcontact.main.log</file>
+        <file>${log.dir}/main.log</file>
         <append>true</append>
         <layout>
             <pattern>%d [a:%X{accountId},m:%X{meetupId},u:%X{currentUser},d:%X{currentDesk},r:%X{requestId}] %5p [%8c] - %m %n</pattern>
         </layout>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log.dir}/chatcontact.main.%d.%i.log.gz</fileNamePattern>
+            <fileNamePattern>${log.dir}/main.%d.%i.log.gz</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
         </rollingPolicy>
     </appender>
