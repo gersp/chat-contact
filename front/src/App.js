@@ -16,7 +16,7 @@ import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
 
 import NotFound from './views/NotFound/NotFound';
 import SignIn from './views/SignIn/SignIn';
-import Hello from 'views/Hello/Hello';
+import Home from 'views/Home/Home';
 import Registration from './views/Registration/Registration';
 import RootRedirect from './views/RootRedirect/RootRedirect';
 import Minimal from './layouts/Minimal/Minimal';
@@ -92,7 +92,7 @@ export default class App extends Component {
                           <Router history={browserHistory}>
                             <Switch>
                               {/* <RouteWithLayout component={RootRedirect} layout={Empty} path='/' exact /> */}
-                              <RouteWithLayout component={Hello} layout={Empty} path='/' />
+                              <RouteWithLayout component={Home} layout={Empty} path='/' />
                               <RouteWithLayout component={SignIn} exact layout={Minimal} path='/sign-in' />
                               {theme.registrationAvailable && (
                                 <>

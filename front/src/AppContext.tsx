@@ -1,11 +1,11 @@
 import React, { createContext } from 'react';
 import axios, { AxiosInstance } from 'axios';
-import {
-  AccountApi,
-  AuthApi,
-  SessionInfoData,
-  ChannelsApi
-} from './api';
+// import {
+//   AccountApi,
+//   AuthApi,
+//   SessionInfoData,
+//   ChannelsApi
+// } from './api';
 import { TopNoticeContextData } from './components/TopNotice/TopNoticeContext';
 
 interface AppContextProps {
@@ -23,13 +23,13 @@ interface Rastjazka {
 export interface AppContextData {
   sessionId?: string;
   loading: boolean;
-  session?: SessionInfoData;
-  authApi: AuthApi;
-  accountApi: AccountApi;
-  channelsApi: ChannelsApi;
+  // session?: SessionInfoData;
+  // authApi: AuthApi;
+  // accountApi: AccountApi;
+  // channelsApi: ChannelsApi;
   axiosInstance: () => AxiosInstance;
 
-  login: (session: SessionInfoData) => void;
+  // login: (session: SessionInfoData) => void;
   logout: () => void;
   location: string;
   history: any;
@@ -37,17 +37,17 @@ export interface AppContextData {
 }
 
 interface AppContextState {
-  session?: SessionInfoData;
+  // session?: SessionInfoData;
   loading: boolean;
 }
 
 const AppContext = createContext<AppContextData>({
   loading: false,
-  authApi: new AuthApi(),
-  channelsApi: new ChannelsApi(),
-  accountApi: new AccountApi(),
+  // authApi: new AuthApi(),
+  // channelsApi: new ChannelsApi(),
+  // accountApi: new AccountApi(),
   axiosInstance: () => axios.create(),
-  login: () => {},
+  // login: () => {},
   logout: () => {},
   location: '/',
   history: {},
@@ -161,56 +161,56 @@ class AppContextProvider extends React.Component<AppContextProps, AppContextStat
     return instance;
   };
 
-  login = (session: SessionInfoData) => {
-    localStorage.setItem('sessionId', session.sessionId!!);
-    // this.props.ws.send({ register: session.sessionId });
-    this.setState({
-      session: session,
-      loading: false,
-    });
-    // this.checkSessionInfo();
-  };
+  // login = (session: SessionInfoData) => {
+  //   localStorage.setItem('sessionId', session.sessionId!!);
+  //   // this.props.ws.send({ register: session.sessionId });
+  //   this.setState({
+  //     session: session,
+  //     loading: false,
+  //   });
+  //   // this.checkSessionInfo();
+  // };
 
   logout = () => {
-    if (this.state.session) {
-        const authApi = new AuthApi({ basePath: this.props.apiUrl, accessToken: this.state.session.sessionId });
-        localStorage.removeItem('sessionId');
-        this.setState({
-          session: undefined,
-          loading: false,
-        });
-        authApi.logout();
-        this.props.history.push('/');
-    }
+    // if (this.state.session) {
+    //     const authApi = new AuthApi({ basePath: this.props.apiUrl, accessToken: this.state.session.sessionId });
+    //     localStorage.removeItem('sessionId');
+    //     this.setState({
+    //       session: undefined,
+    //       loading: false,
+    //     });
+    //     authApi.logout();
+    //     this.props.history.push('/');
+    // }
   
   };
 
   render() {
-    const sessionId = this.state.session != null ? this.state.session.sessionId : undefined;
+    // const sessionId = this.state.session != null ? this.state.session.sessionId : undefined;
     return (
       <AppContext.Provider
         value={{
-          sessionId: sessionId,
+          // sessionId: sessionId,
           loading: this.state.loading,
           location: window.location.href,
-          session: this.state.session,
-          authApi: new AuthApi(
-            { basePath: this.props.apiUrl, accessToken: sessionId },
-            this.props.apiUrl,
-            this.axiosInstance()
-          ),
-          accountApi: new AccountApi(
-            { basePath: this.props.apiUrl, accessToken: sessionId },
-            this.props.apiUrl,
-            this.axiosInstance()
-          ),
-          channelsApi: new ChannelsApi(
-            { basePath: this.props.apiUrl, accessToken: sessionId },
-            this.props.apiUrl,
-            this.axiosInstance()
-          ),
+          // session: this.state.session,
+          // authApi: new AuthApi(
+          //   { basePath: this.props.apiUrl, accessToken: sessionId },
+          //   this.props.apiUrl,
+          //   this.axiosInstance()
+          // ),
+          // accountApi: new AccountApi(
+          //   { basePath: this.props.apiUrl, accessToken: sessionId },
+          //   this.props.apiUrl,
+          //   this.axiosInstance()
+          // ),
+          // channelsApi: new ChannelsApi(
+          //   { basePath: this.props.apiUrl, accessToken: sessionId },
+          //   this.props.apiUrl,
+          //   this.axiosInstance()
+          // ),
           axiosInstance: this.axiosInstance,
-          login: this.login,
+          // login: this.login,
           logout: this.logout,
           history: this.props.history,
           errorHandler: this.errorHandler,
