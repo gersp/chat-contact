@@ -1,5 +1,7 @@
 package chatcontact
 
-fun main(args: Array<String>) {
+object Migrations {
+    fun main(args: Array<String>) {
 
+    }
 }
