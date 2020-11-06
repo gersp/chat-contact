@@ -4,3 +4,15 @@ info:
   version: 0.0.0
 
 paths:
+  # *******************************************************************************
+  #                           Admin
+  # *******************************************************************************
+  /api/getCounters:
+    get:
+      summary: GetCounters
+      operationId: getCounters
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Result

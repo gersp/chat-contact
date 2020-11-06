@@ -91,7 +91,7 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src/main/kotlin</sourceDirectory>
+        <sourceDirectory>src/chatcontact.main/kotlin</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -208,7 +208,7 @@
                                         </manifest>
                                     </archive>
                                     <descriptors>
-                                        <descriptor>src/main/assembly/test-jar-with-dependencies.xml</descriptor>
+                                        <descriptor>src/chatcontact.main/assembly/test-jar-with-dependencies.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
@@ -220,7 +220,7 @@
                                 </goals>
                                 <configuration>
                                     <descriptors>
-                                        <descriptor>src/main/assembly/test-zip-with-resources.xml</descriptor>
+                                        <descriptor>src/chatcontact.main/assembly/test-zip-with-resources.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>

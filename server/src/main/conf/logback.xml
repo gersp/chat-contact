@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true" scanPeriod="30 seconds">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <if condition='property("spring.profiles.active").contains("dev")'>
+        <then>
+            <property name="devProfile" value="true"/>
+        </then>
+        <else>
+            <property name="devProfile" value="false"/>
+        </else>
+    </if>
+
+    <if condition='property("spring.profiles.active").contains("migration")'>
+        <then>
+            <property name="migrationProfile" value="true"/>
+        </then>
+        <else>
+            <property name="migrationProfile" value="false"/>
+        </else>
+    </if>
+
+    <if condition='property("spring.profiles.active").contains("test")'>
+        <then>
+            <property name="testProfile" value="true"/>
+        </then>
+        <else>
+            <property name="testProfile" value="false"/>
+        </else>
+    </if>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout>
+            <pattern>%d [u:%X{currentUser},d:%X{currentDesk},r:%X{requestId}] %5p [%8c] - %m %n</pattern>
+        </layout>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.dir}/chatcontact.main.log</file>
+        <append>true</append>
+        <layout>
+            <pattern>%d [a:%X{accountId},m:%X{meetupId},u:%X{currentUser},d:%X{currentDesk},r:%X{requestId}] %5p [%8c] - %m %n</pattern>
+        </layout>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/chatcontact.main.%d.%i.log.gz</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+        </rollingPolicy>
+    </appender>
+
+    <root level="${LOGGING_ROOT_LEVEL:-INFO}">
+        <if condition='${testProfile} || ${devProfile} || ${migrationProfile}'>
+            <then>
+                <appender-ref ref="CONSOLE"/>
+            </then>
+            <else>
+                <appender-ref ref="FILE"/>
+            </else>
+        </if>
+    </root>
+
+    <root>
+        <if condition='${testProfile} || ${devProfile} || ${migrationProfile}'>
+            <then>
+                <appender-ref ref="CONSOLE"/>
+            </then>
+            <else>
+                <appender-ref ref="FILE"/>
+            </else>
+        </if>
+    </root>
+
+    <logger name="org.eclipse.jetty" level="WARN"/>
+    <logger name="net.sf.ehcache" level="ERROR"/>
+    <logger name="org.flywaydb" level="ERROR"/>
+    <logger name="org.hibernate" level="ERROR"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="okhttp3.OkHttpClient" level="WARN"/>
+
+    <include file="/etc/chatcontact/logback-local.xml"/>
+</configuration>
+

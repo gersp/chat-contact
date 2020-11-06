@@ -1,0 +1,9 @@
+server:
+  externalUrl: http://localhost:7040
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/chatcontact
+    username: postgres
+    password: postgres
+

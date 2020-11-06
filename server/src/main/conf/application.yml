@@ -1,0 +1,44 @@
+server:
+  port: 7040
+  servlet:
+    session:
+      timeout: 86400
+  externalUrl: http://localhost:7040
+
+
+spring:
+  main:
+    banner-mode: "off"
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+  application:
+    name: chatcontact
+
+  pid:
+    file: /opt/telechat/bin/${id:application}.pid
+    fail-on-write-error: true
+
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/chatcontact
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL94Dialect
+    show-sql: false
+    hibernate:
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      ddl-auto: none #create #update
+
+
+logging:
+  file: ${log.dir:/tmp}/chatcontact.main.log
+  file.max-history: 90
+  file.max-size: 100MB
+  long-request-time: 1000
+  request-body-characters: 1000
