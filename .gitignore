@@ -2,4 +2,5 @@
 target
 application-local.yml
 *.iml
+log.dir_IS_UNDEFINED
 
