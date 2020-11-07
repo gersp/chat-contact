@@ -5,6 +5,7 @@ import chatcontact.api.model.CandidateData
 import chatcontact.api.model.MatchRequestData
 import chatcontact.api.model.StatData
 import chatcontact.api.model.UserData
+import chatcontact.dao.toApiData
 import chatcontact.services.DataService
 import org.springframework.stereotype.Service
 
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service
 class AdminDataApiImpl(val data: DataService) : AdminDataApiService {
 
     override fun createUser(userData: UserData): UserData {
-        TODO("Not yet implemented")
+        return data.createUser(userData)
     }
 
     override fun getCounters(): StatData {
@@ -20,11 +21,11 @@ class AdminDataApiImpl(val data: DataService) : AdminDataApiService {
     }
 
     override fun getMatching(userId: Long): MatchRequestData {
-        TODO("Not yet implemented")
+        return data.getActiveMatching(userId).toApiData()
     }
 
     override fun getMatchingCandidates(userId: Long, matchRequestId: Long): List<CandidateData> {
-        TODO("Not yet implemented")
+        return data.getCandidates(userId, matchRequestId)
     }
 
     override fun listUsers(): List<UserData> {
