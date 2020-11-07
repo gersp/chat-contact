@@ -158,7 +158,22 @@ components:
         topicText:
           type: string
         timeRange:
-          type: string
+          $ref: "#/components/schemas/TimeRestrictionData"
+
+    TimeRestrictionData:
+      properties:
+        morning:
+          type: boolean
+        daytime:
+          type: boolean
+        evening:
+          type: boolean
+        night:
+          type: boolean
+        weekends:
+          type: boolean
+
+
 
     CandidateData:
       properties:
