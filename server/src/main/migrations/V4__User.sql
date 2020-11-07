@@ -1,0 +1,2 @@
+ALTER TABLE users ADD COLUMN work TEXT;
+ALTER TABLE users ADD COLUMN about_user TEXT;

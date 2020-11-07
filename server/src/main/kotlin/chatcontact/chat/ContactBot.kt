@@ -5,7 +5,9 @@ import com.github.kotlintelegrambot.entities.KeyboardReplyMarkup
 import com.justai.jaicf.channel.telegram.telegram
 import com.justai.jaicf.model.scenario.Scenario
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 
+@Service
 class ContactBot : Scenario() {
 
     private val log = LoggerFactory.getLogger(this.javaClass)

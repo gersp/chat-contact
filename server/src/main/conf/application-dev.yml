@@ -7,3 +7,6 @@ spring:
     username: postgres
     password: postgres
 
+chat:
+  tokens:
+  telegramApiUrl:
