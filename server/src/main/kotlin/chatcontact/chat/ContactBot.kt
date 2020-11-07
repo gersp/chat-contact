@@ -1,5 +1,7 @@
 package chatcontact.chat
 
+import chatcontact.api.model.MatchRequestData
+import chatcontact.api.model.TimeRestrictionData
 import chatcontact.api.model.UserData
 import chatcontact.services.DataService
 import com.github.kotlintelegrambot.entities.KeyboardButton
@@ -22,6 +24,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
 
             }
             action {
+                dataService.cleanup(request.clientId.toLong())
                 reactions.run {
                     say("Добро пожаловать в Chat Contact! \n" +
                             "Чат, в котором можно выбирать собеседника по интересам.")
@@ -448,5 +451,17 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                 reactions.say("Для этого запроса нет обработчика")
             }
         }
+    }
+    
+    private fun stopButton(): KeyboardReplyMarkup {
+        return KeyboardReplyMarkup(
+                listOf(
+                        listOf(
+                                KeyboardButton("Остановить поиск контакта")
+                        )
+                ),
+                resizeKeyboard = true,
+                oneTimeKeyboard = true
+        )
     }
 }

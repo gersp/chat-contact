@@ -25,6 +25,8 @@ interface UserRepository : JpaRepository<User, Long> {
     @Query("SELECT nextval('user_id_seq')", nativeQuery = true)
     fun nextId(): Long
 
+    fun findByTelegramUserId(userId: Long): User?
+
 }
 
 fun User.toApiData(): UserData {

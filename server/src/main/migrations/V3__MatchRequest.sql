@@ -12,7 +12,7 @@ CREATE TABLE match_requests
 
     timestamp           TIMESTAMP               NOT NULL DEFAULT now(),
 
-    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE NO ACTION
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE SEQUENCE match_request_id_seq START 1;
@@ -30,10 +30,10 @@ CREATE TABLE match_status
 
     timestamp           TIMESTAMP               NOT NULL DEFAULT now(),
 
-    FOREIGN KEY(first_user_id)  REFERENCES users(id) ON DELETE NO ACTION,
-    FOREIGN KEY(second_user_id) REFERENCES users(id) ON DELETE NO ACTION,
-    FOREIGN KEY(first_match_request_id)  REFERENCES match_requests(id) ON DELETE NO ACTION,
-    FOREIGN KEY(second_match_request_id) REFERENCES match_requests(id) ON DELETE NO ACTION
+    FOREIGN KEY(first_user_id)  REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(second_user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(first_match_request_id)  REFERENCES match_requests(id) ON DELETE CASCADE,
+    FOREIGN KEY(second_match_request_id) REFERENCES match_requests(id) ON DELETE CASCADE
 );
 
 CREATE SEQUENCE match_status_id_seq START 1;

@@ -103,4 +103,9 @@ class DataService(
                 (!m1.timeRange.weekends || (m1.timeRange.weekends && m2.timeRange.weekends))
     }
 
+    fun cleanup(telegramUserId: Long) {
+        val user = users.findByTelegramUserId(telegramUserId) ?: return
+        users.delete(user)
+    }
+
 }
