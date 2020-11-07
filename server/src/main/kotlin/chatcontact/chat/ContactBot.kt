@@ -1,6 +1,7 @@
 package chatcontact.chat
 
 import chatcontact.api.model.UserData
+import chatcontact.dao.User
 import chatcontact.services.DataService
 import com.github.kotlintelegrambot.entities.KeyboardButton
 import com.github.kotlintelegrambot.entities.KeyboardReplyMarkup
@@ -16,8 +17,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     init {
-        state("Start")
-        {
+        state("Start") {
             activators {
                 regex("/start")
             }
@@ -30,8 +30,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
             }
         }
 
-        state("FirstMenu", modal = true)
-        {
+        state("FirstMenu", modal = true) {
             action {
                 reactions.telegram?.say("Для начала надо заполнить анкету! " +
                         "Она будет показываться другим участникам Chat Contact при подборе собеседника для вас.",
@@ -49,17 +48,16 @@ class ContactBot(private val dataService: DataService) : Scenario() {
             }
         }
 
-        state("Info")
-        {
+        state("Info") {
             activators {
-                regex("Заполнить анкету!")
+                regex("Как это работает\\?")
             }
             action {
                 reactions.telegram?.say("Шаг 1: Вы заполняете небольшую анкету о себе\n" +
-                        "Шаг 2: В любое удобное для вас время инициируете поиск собеседника, можете выбрать тему и время для общения\n" +
-                        "Шаг 3: Умные алгоритмы подбирают подходящие под ваш запрос анкеты и предлагают их\n" +
-                        "Шаг 4:  Вы смотрите анкеты собеседников и выбираете те, с кем можно найти общий язык. Бот направит им запрос на контакт с вами\n" +
-                        "Шаг 5: Есть контакт! Если собеседник тоже лайкнул вашу анкету, бот вас сведет и предложит пообщаться.\n" +
+                        "Шаг 2: В любое удобное для Вас время инициируете поиск собеседника, можете выбрать тему и время для общения\n" +
+                        "Шаг 3: Умный алгоритм подбирает подходящие под ваш запрос анкеты и предлагает их\n" +
+                        "Шаг 4: Вы смотрите анкеты собеседников и выбираете интересные. Бот направит им запрос для установления контакта с Вами\n" +
+                        "Шаг 5: Есть контакт! Если собеседник тоже лайкнул вашу анкету, бот обменяет вас контактами.\n" +
                         "Если собеседник не ответил, не расстраивайтесь - бот предложит другую анкету.",
                         replyMarkup = KeyboardReplyMarkup(
                                 listOf(
@@ -77,7 +75,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
         state("Form", modal = true) {
             activators {
                 regex("Всё понятно, готов начать!")
-                regex("Заполнить анкекту")
+                regex("Заполнить анкету!")
             }
 
             action {
@@ -139,8 +137,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                 }
             }
 
-            state("InputAboutYou")
-            {
+            state("InputAboutYou") {
                 action {
                     reactions.say("Расскажи немного о себе (в свободной форме)")
                 }
@@ -159,14 +156,13 @@ class ContactBot(private val dataService: DataService) : Scenario() {
             }
         }
 
-        state("Preview")
-        {
+        state("Preview") {
             action {
                 reactions.telegram?.say("Всё сохранил, теперь ваша анкета выглядит так!\n" +
-                        "            Имя: {{ ${context.session["name"]}}\n" +
-                        "            Деятельность: {{${context.session["work"]}}\n" +
-                        "            Интересы/Хобби: {{ ${context.session["interest"]} }}\n" +
-                        "            О себе: {{ ${context.session["aboutYou"]}}}",
+                        "            Имя: ${context.session["name"]}\n" +
+                        "            Деятельность: ${context.session["work"]}\n" +
+                        "            Интересы/Хобби: ${context.session["interest"]}\n" +
+                        "            О себе: ${context.session["aboutYou"]}",
                         replyMarkup = KeyboardReplyMarkup(
                                 listOf(
                                         listOf(
@@ -174,8 +170,8 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                 KeyboardButton("Редактировать анкету")
                                         )
                                 ),
-                                oneTimeKeyboard = true,
-                                resizeKeyboard = true
+                                resizeKeyboard = true,
+                                oneTimeKeyboard = true
                         )
                 )
                 val user = dataService.createUser(UserData(displayName = context.session["name"] as String?,
@@ -186,8 +182,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
             }
         }
 
-        state("Search")
-        {
+        state("Search") {
             activators {
                 regex("Запустить поиск собеседника!")
             }
@@ -205,25 +200,95 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                         )
                 )
             }
+        }
 
-            state("Topic")
-            {
+        state("Topic") {
+            activators {
+                regex("Задать тему и время")
+            }
+            action {
+                state("Topic")
+                {
+                    activators {
+                        regex("Задать тему и время")
+                    }
+                    action {
+                        reactions.telegram?.say(
+                                "Укажите тему",
+                                replyMarkup = KeyboardReplyMarkup(
+                                        listOf(
+                                                listOf(
+                                                        KeyboardButton("Кино и вино"),
+                                                        KeyboardButton("Путешествия"),
+                                                        KeyboardButton("Работа и деньги"),
+                                                        KeyboardButton("Еда"),
+                                                        KeyboardButton("Спорт и красота"),
+                                                        KeyboardButton("Пообщаться за жизнь"),
+                                                        KeyboardButton("Любая!")
+                                                )
+                                        ),
+                                        oneTimeKeyboard = true,
+                                        resizeKeyboard = true
+                                )
+                        )
+                    }
+                    state("Time")
+                    {
+                        activators {
+                            regex(".*")
+                        }
+                        action {
+                            reactions.run {
+                                reactions.telegram?.say(
+                                        "Укажите время",
+                                        replyMarkup = KeyboardReplyMarkup(
+                                                listOf(
+                                                        listOf(
+                                                                KeyboardButton("Утро (с 09-12)"),
+                                                                KeyboardButton("День (с 12-18)"),
+                                                                KeyboardButton("Вечер (с 18-22)"),
+                                                                KeyboardButton("Поздний вечер (с 22-00)"),
+                                                                KeyboardButton("Выходные"),
+                                                                KeyboardButton("Любое!")
+                                                        )
+                                                ),
+                                                oneTimeKeyboard = true,
+                                                resizeKeyboard = true
+                                        )
+                                )
+                            }
+                        }
+                        state("Matching")
+                        {
+                            activators {
+                                regex("Утро (с 09-12)")
+                                regex("День (с 12-18)")
+                                regex("Вечер (с 18-22)")
+                                regex("Поздний вечер (с 22-00)")
+                                regex("Выходные")
+                                regex("Любое!")
+                            }
+                            action {
+                                reactions.say("Всё понял, пошел искать контакт!")
+                            }
+                        }
+                    }
+                }
+            }
+            state("FixForm") {
                 activators {
-                    regex("Задать тему и время")
+                    regex("Редактировать анкету")
                 }
                 action {
-                    reactions.telegram?.say(
-                            "Укажите тему",
+                    reactions.telegram?.say("Выберите поле, которое, хотите поменять.",
                             replyMarkup = KeyboardReplyMarkup(
                                     listOf(
                                             listOf(
-                                                    KeyboardButton("Кино и вино"),
-                                                    KeyboardButton("Путешествия"),
-                                                    KeyboardButton("Работа и деньги"),
-                                                    KeyboardButton("Еда"),
-                                                    KeyboardButton("Спорт и красота"),
-                                                    KeyboardButton("Пообщаться за жизнь"),
-                                                    KeyboardButton("Любая!")
+                                                    KeyboardButton("Имя"),
+                                                    KeyboardButton("Деятельность"),
+                                                    KeyboardButton("Интересы/Хобби"),
+                                                    KeyboardButton("О себе"),
+                                                    KeyboardButton("Завершить редактирование")
                                             )
                                     ),
                                     oneTimeKeyboard = true,
@@ -231,142 +296,88 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                             )
                     )
                 }
-                state("Time")
-                {
-                    activators {
-                        regex(".*")
-                    }
+                state("ChangeInputName") {
                     action {
-                        reactions.run {
-                            reactions.telegram?.say(
-                                    "Укажите время",
-                                    replyMarkup = KeyboardReplyMarkup(
-                                            listOf(
-                                                    listOf(
-                                                            KeyboardButton("Утро (с 09-12)"),
-                                                            KeyboardButton("День (с 12-18)"),
-                                                            KeyboardButton("Вечер (с 18-22)"),
-                                                            KeyboardButton("Поздний вечер (с 22-00)"),
-                                                            KeyboardButton("Выходные"),
-                                                            KeyboardButton("Любое!")
-                                                    )
-                                            ),
-                                            oneTimeKeyboard = true,
-                                            resizeKeyboard = true
-                                    )
-                            )
-                        }
+                        reactions.telegram?.say("Как тебя зовут?",
+                                replyMarkup = ReplyKeyboardRemove())
                     }
-                    state("Matching")
-                    {
+
+                    state("ChangeInputNameResponse") {
                         activators {
-                            regex("Утро (с 09-12)")
-                            regex("День (с 12-18)")
-                            regex("Вечер (с 18-22)")
-                            regex("Поздний вечер (с 22-00)")
-                            regex("Выходные")
-                            regex("Любое!")
+                            regex(".*")
                         }
                         action {
-                            reactions.say("Всё понял, пошел искать контакт!")
+                            reactions.run {
+                                context.session["name"] = request.input
+                                go("/FixForm")
+                            }
                         }
                     }
                 }
-            }
-        }
-        state("FixForm") {
-            activators {
-                regex("Редактировать анкету")
-            }
-            action {
-                reactions.telegram?.say("Выберите поле, которое, хотите поменять.",
-                        replyMarkup = KeyboardReplyMarkup(
-                                listOf(
-                                        listOf(
-                                                KeyboardButton("Имя"),
-                                                KeyboardButton("Деятельность"),
-                                                KeyboardButton("Интересы/Хобби"),
-                                                KeyboardButton("О себе"),
-                                                KeyboardButton("Завершить редактирование")
-                                        )
-                                ),
-                                oneTimeKeyboard = true,
-                                resizeKeyboard = true
-                        )
-                )
-            }
-            state("ChangeInputName") {
-                action {
-                    reactions.telegram?.say("Как тебя зовут?",
-                            replyMarkup = ReplyKeyboardRemove())
-                }
 
-                state("ChangeInputNameResponse") {
-                    activators {
-                        regex(".*")
-                    }
+                state("ChangeInputWork") {
                     action {
-                        reactions.run {
-                            context.session["name"] = request.input
-                            go("/FixForm")
+                        reactions.say("Расскажи немного о своей рабочей деятельности (кем работаешь, что делаешь и т.д.)")
+                    }
+
+                    state("ChangeInputWorkResponse") {
+                        activators {
+                            regex(".*")
+                        }
+                        action {
+                            reactions.run {
+                                context.session["work"] = request.input
+                                go("/FixForm")
+                            }
                         }
                     }
+                }
+
+                state("ChangeInputInterests")
+                {
+                    action {
+                        reactions.say("Чем занимаешься в свободное время ? (Интересы, хобби)")
+                    }
+                    state("ChangeInputInterestsResponse") {
+                        activators {
+                            regex(".*")
+                        }
+                        action {
+                            reactions.run {
+                                context.session["interest"] = request.input
+                                go("/FixForm")
+                            }
+                        }
+                    }
+                }
+
+                state("ChangeInputAboutYou")
+                {
+                    action {
+                        reactions.say("Расскажи немного о себе (в свободной форме)")
+                    }
+                    state("ChangeInputAboutYouInterestsResponse") {
+                        activators {
+                            regex(".*")
+                        }
+                        action {
+                            reactions.run {
+                                context.session["aboutYou"] = request.input
+                                go("/FixForm")
+                            }
+                        }
+                    }
+
                 }
             }
 
-            state("ChangeInputWork") {
+            state("NoMatch", noContext = true) {
+                activators {
+                    catchAll()
+                }
                 action {
-                    reactions.say("Расскажи немного о своей рабочей деятельности (кем работаешь, что делаешь и т.д.)")
+                    reactions.say("Для этого запроса нет обработчика")
                 }
-
-                state("ChangeInputWorkResponse") {
-                    activators {
-                        regex(".*")
-                    }
-                    action {
-                        reactions.run {
-                            context.session["work"] = request.input
-                            go("/FixForm")
-                        }
-                    }
-                }
-            }
-
-            state("ChangeInputInterests")
-            {
-                action {
-                    reactions.say("Чем занимаешься в свободное время ? (Интересы, хобби)")
-                }
-                state("ChangeInputInterestsResponse") {
-                    activators {
-                        regex(".*")
-                    }
-                    action {
-                        reactions.run {
-                            context.session["interest"] = request.input
-                            go("/FixForm")
-                        }
-                    }
-                }
-            }
-
-            state("ChangeInputAboutYou")
-            {
-                action {
-                    reactions.say("Расскажи немного о себе (в свободной форме)")
-                }
-                state("ChangeInputAboutYouInterestsResponse") {
-                    activators {
-                        regex(".*")
-                    }
-                    action {
-                        reactions.run {
-                            context.session["aboutYou"] = request.input
-                            go("/FixForm")
-                        }
-                    }
-                }
-
             }
         }
     }
