@@ -159,6 +159,24 @@ class ContactBot(private val dataService: DataService) : Scenario() {
             }
         }
 
+        state("SecondMenu") {
+            activators {
+                regex("Остановить поиск контакта")
+            }
+            action {
+                reactions.telegram?.say("Что делаем дальше?", replyMarkup = KeyboardReplyMarkup(
+                        listOf(
+                                listOf(
+                                        KeyboardButton("Запустить поиск собеседника!"),
+                                        KeyboardButton("Редактировать анкету")
+                                )
+                        ),
+                        resizeKeyboard = true,
+                        oneTimeKeyboard = true
+                ))
+            }
+        }
+
         state("Preview") {
             action {
                 reactions.telegram?.say("Всё сохранил, теперь ваша анкета выглядит так:\n" +
@@ -183,7 +201,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                         aboutUser = context.session["aboutYou"] as String?,
                         // TODO: fill imageLink =
                         telegramUserId = request.clientId.toLong()
-                        ))
+                ))
                 context.session["userId"] = user.userId
             }
         }
@@ -208,7 +226,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
             }
         }
 
-        state("Topic"){
+        state("Topic") {
             activators {
                 regex("Задать тему и время")
             }
@@ -219,9 +237,14 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                 listOf(
                                         listOf(
                                                 KeyboardButton("Кино и вино"),
-                                                KeyboardButton("Путешествия"),
+                                                KeyboardButton("Путешествия")
+                                        ),
+                                        listOf(
                                                 KeyboardButton("Работа и деньги"),
-                                                KeyboardButton("Еда"),
+                                                KeyboardButton("Еда")
+                                        ),
+
+                                        listOf(
                                                 KeyboardButton("Спорт и красота"),
                                                 KeyboardButton("Пообщаться за жизнь"),
                                                 KeyboardButton("Любая!")
@@ -232,6 +255,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                         )
                 )
             }
+
             state("Time")
             {
                 activators {
@@ -246,7 +270,9 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                 listOf(
                                                         KeyboardButton("Утро (с 09-12)"),
                                                         KeyboardButton("День (с 12-18)"),
-                                                        KeyboardButton("Вечер (с 18-22)"),
+                                                        KeyboardButton("Вечер (с 18-22)")
+                                                ),
+                                                listOf(
                                                         KeyboardButton("Поздний вечер (с 22-00)"),
                                                         KeyboardButton("Выходные"),
                                                         KeyboardButton("Любое!")
@@ -257,24 +283,51 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                 )
                         )
                     }
+                    context.session["topic"] = request.input
                 }
+
                 state("Matching")
                 {
                     activators {
-                        regex("Утро (с 09-12)")
-                        regex("День (с 12-18)")
-                        regex("Вечер (с 18-22)")
-                        regex("Поздний вечер (с 22-00)")
+                        regex("Утро \\(с 09-12\\)")
+                        regex("День \\(с 12-18\\)")
+                        regex("Вечер \\(с 18-22\\)")
+                        regex("Поздний вечер \\(с 22-00\\)")
                         regex("Выходные")
                         regex("Любое!")
                     }
                     action {
-                        reactions.say("Всё понял, пошел искать контакт!")
-                        reactions.go("/ThirdMenu")
+                        context.session["time"] = when (request.input) {
+                            "Утро (с 09-12)" -> TimeRestrictionData(morning = true)
+                            "День (с 12-18)" -> TimeRestrictionData(daytime = true)
+                            "Вечер (с 18-22)" -> TimeRestrictionData(evening = true)
+                            "Поздний вечер (с 22-00)" -> TimeRestrictionData(night = true)
+                            "Выходные" -> TimeRestrictionData(weekends = true)
+                            else -> TimeRestrictionData(morning = true, daytime = true,
+                                                        evening = true, night = true, weekends = true)
+                        }
+                        reactions.go("/StartMatch")
                     }
                 }
             }
         }
+
+        state("StartMatch") {
+            activators {
+                regex("Без ограничений!")
+            }
+            action {
+                reactions.say("Всё понял, пошел искать контакт!")
+                dataService.createMatchRequest(MatchRequestData(
+                        userId = context.session["userId"] as Long?,
+                        topicText = context.session["topic"] as String?,
+                        timeRange = context.session["time"] as TimeRestrictionData?
+                )
+                )
+                reactions.go("/ThirdMenu")
+            }
+        }
+
         state("FixForm") {
             activators {
                 regex("Редактировать анкету")
@@ -442,6 +495,95 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                 )
             }
         }
+
+        state("ContactSelection") {
+            activators {
+                regex("select")
+                regex("Дизлайк")
+            }
+            action {
+                reactions.telegram?.say("Подбор собеседника:\n" +
+                        "            Анкета\n" +
+                        "            Имя: Петр Первый\n" +
+                        "            Деятельность: Политик. Каждый день терплю бояр\n" +
+                        "            Интересы: Болото, путешествия, трубка\n" +
+                        "            О себе: Хорош!",
+                        replyMarkup = KeyboardReplyMarkup(
+                                listOf(
+                                        listOf(
+                                                KeyboardButton("Лайк"),
+                                                KeyboardButton("Дизлайк")
+                                        )
+                                ),
+                                resizeKeyboard = true,
+                                oneTimeKeyboard = true
+                        )
+                )
+            }
+        }
+
+        state("ShowLike") {
+            activators {
+                regex("match")
+            }
+            action {
+                reactions.telegram?.say(" К вам проявили интерес!\n" +
+                        "            Анкета\n" +
+                        "            Имя: Екатерина Вторая\n" +
+                        "            Деятельность: Политик и Жена\n" +
+                        "            Интересы: Платья и дворцы\n" +
+                        "            О себе: Хороша!",
+                        replyMarkup = KeyboardReplyMarkup(
+                                listOf(
+                                        listOf(
+                                                KeyboardButton("Есть контакт!"),
+                                                KeyboardButton("Пропустить")
+                                        )
+                                ),
+                                resizeKeyboard = true,
+                                oneTimeKeyboard = true
+                        )
+                )
+                //TODO: пока тут хардкод, потом заменить на настоящие данные человека
+                context.session["match"] = "Екатерина Вторая"
+            }
+        }
+
+        state("FourthMenu") {
+            activators {
+                regex("Есть контакт!")
+            }
+            action {
+                reactions.telegram?.say("Ура, собеседник найден! Спишитесь с ним и договоритесь о месте общения.",
+                        replyMarkup = KeyboardReplyMarkup(
+                                listOf(
+                                        listOf(
+                                                KeyboardButton("Поделиться контактом с ${context.session["match"]}")
+                                        )
+                                )
+                        )
+                )
+            }
+        }
+
+        state("Like") {
+            activators {
+                regex("Лайк")
+            }
+            action {
+                reactions.telegram?.say("Мы отправили вашу анкету собеседнику, ждём контакта!",
+                        replyMarkup = KeyboardReplyMarkup(
+                                listOf(
+                                        listOf(
+                                                KeyboardButton("Показать ещё анкету"),
+                                                KeyboardButton("Остановить поиск контакта")
+                                        )
+                                )
+                        )
+                )
+            }
+        }
+
 
         state("NoMatch", noContext = true) {
             activators {
