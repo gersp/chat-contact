@@ -292,7 +292,15 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                         regex("Любое!")
                     }
                     action {
-                        context.session["time"] = request.input
+                        context.session["time"] = when (request.input) {
+                            "Утро (с 09-12)" -> TimeRestrictionData(morning = true)
+                            "День (с 12-18)" -> TimeRestrictionData(daytime = true)
+                            "Вечер (с 18-22)" -> TimeRestrictionData(evening = true)
+                            "Поздний вечер (с 22-00)" -> TimeRestrictionData(night = true)
+                            "Выходные" -> TimeRestrictionData(weekends = true)
+                            else -> TimeRestrictionData(morning = true, daytime = true,
+                                                        evening = true, night = true, weekends = true)
+                        }
                         reactions.go("/StartMatch")
 
                     }
@@ -309,9 +317,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                 dataService.createMatchRequest(MatchRequestData(
                         userId = context.session["userId"] as Long?,
                         topicText = context.session["topic"] as String?,
-                        timeRange = TimeRestrictionData(
-                               // TODO timerestriction processing
-                        )
+                        timeRange = context.session["time"] as TimeRestrictionData?
                 )
                 )
                 reactions.go("/ThirdMenu")
