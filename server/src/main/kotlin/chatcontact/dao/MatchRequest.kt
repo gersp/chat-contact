@@ -28,6 +28,7 @@ data class MatchRequest(
         val topicText: String,
         @Embedded
         val timeRange: TimeRestriction,
+        val active: Boolean,
 
         val timestamp: Instant
 )
@@ -36,8 +37,8 @@ interface MatchRequestRepository : JpaRepository<MatchRequest, Long> {
     @Query("SELECT nextval('match_request_id_seq')", nativeQuery = true)
     fun nextId(): Long
 
-    @Query("SELECT * FROM match_requests WHERE user_id = :userId ORDER BY DESC timestamp LIMIT 1", nativeQuery = true)
-    fun findLastByUser(userId: Long): MatchRequest
+    @Query("SELECT * FROM match_requests WHERE user_id = :userId AND active IS TRUE ORDER BY DESC timestamp LIMIT 1", nativeQuery = true)
+    fun findLastActiveByUser(userId: Long): MatchRequest
 
     @Query("SELECT * FROM match_requests WHERE user_id = :userId ORDER BY DESC timestamp", nativeQuery = true)
     fun findByUserId(userId: Long): List<MatchRequest>
@@ -67,7 +68,8 @@ fun MatchRequest.toApiData(): MatchRequestData {
     return MatchRequestData(
             matchRequestId = this.id,
             topicText = this.topicText,
-            timeRange = this.timeRange.toApiData()
+            timeRange = this.timeRange.toApiData(),
+            active = this.active
     )
 }
 
@@ -77,6 +79,7 @@ fun MatchRequestData.toDBData(id: Long): MatchRequest {
             userId = this.userId!!,
             topicText = this.topicText!!,
             timeRange = this.timeRange?.toDBData() ?: TimeRestriction(),
-            timestamp = Instant.now()
+            timestamp = Instant.now(),
+            active = this.active ?: false
     )
 }

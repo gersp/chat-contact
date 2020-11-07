@@ -26,4 +26,6 @@ interface MatchStatusRepository : JpaRepository<MatchStatus, Long> {
     @Query("SELECT nextval('match_status_id_seq')", nativeQuery = true)
     fun nextId(): Long
 
+    @Query("SELECT * FROM match_status WHERE first_match_request_id = :firstMatchRequestId AND second_match_request_id = :secondMatchRequestId ORDER BY timestamp DESC LIMIT 1", nativeQuery = true)
+    fun findByFirstMatchRequestIdAndSecondMatchRequestId(firstId: Long, secondId: Long): MatchStatus?
 }

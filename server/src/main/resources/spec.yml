@@ -185,6 +185,8 @@ components:
           format: int64
         topicText:
           type: string
+        active:
+          type: boolean
         timeRange:
           $ref: "#/components/schemas/TimeRestrictionData"
 
