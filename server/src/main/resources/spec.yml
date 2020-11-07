@@ -79,10 +79,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserFormData'
+              $ref: '#/components/schemas/NewUserFormData'
       responses:
         '200':
-          description: Ok
+          description: Result
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/UserFormData'
 
   /api/user/startMatching:
     post:
@@ -190,6 +194,14 @@ components:
         matchStatus:
           $ref: "#/components/schemas/MatchStatus"
         matchLink:
+          type: string
+    NewUserFormData:
+      properties:
+        fio:
+          type: string
+        image:
+          type: string
+        interests:
           type: string
 
     MatchStatus:

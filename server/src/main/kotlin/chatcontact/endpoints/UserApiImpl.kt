@@ -3,6 +3,7 @@ package chatcontact.endpoints
 import chatcontact.api.UserApiService
 import chatcontact.api.model.MatchData
 import chatcontact.api.model.MatchStatusData
+import chatcontact.api.model.NewUserFormData
 import chatcontact.api.model.UserFormData
 
 class UserApiImpl: UserApiService {
@@ -10,7 +11,7 @@ class UserApiImpl: UserApiService {
         TODO("Not yet implemented")
     }
 
-    override fun createForm(userFormData: UserFormData) {
+    override fun createForm(userFormData: NewUserFormData): UserFormData {
         TODO("Not yet implemented")
     }
 
