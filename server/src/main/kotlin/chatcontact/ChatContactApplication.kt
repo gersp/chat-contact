@@ -7,12 +7,17 @@ import org.springframework.boot.runApplication
 class ChatContactApplication
 
 object Dev {
-    @JvmStatic
-    fun main(args: Array<String>) {
+    fun applyProps() {
         System.setProperty("spring.profiles.active", "dev,local")
         System.setProperty("spring.config.location", "server/src/main/conf/")
         System.setProperty("config.location", "server/src/main/conf/")
         System.setProperty("logging.config", "server/src/main/conf/logback.xml")
+        System.setProperty("migration.path", "server/src/main/migrations")
+    }
+
+    @JvmStatic
+    fun main(args: Array<String>) {
+        applyProps()
 
         chatcontact.main(args)
     }

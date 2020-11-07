@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class AdminDataApiImpl(val data: DataService) : AdminDataApiService {
+
     override fun createUser(userData: UserData): UserData {
         TODO("Not yet implemented")
     }
