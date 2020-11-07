@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Card, Typography } from '@material-ui/core';
+
+import { AppContext } from 'AppContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,6 +43,14 @@ const useStyles = makeStyles(theme => ({
 
 const Home = () => {
   const classes = useStyles();
+  const appContext = useContext(AppContext);
+
+  const [counters, setCounters] = useState();
+
+  useEffect(() => {
+    appContext.adminApi.getCounters()
+      .then(({data}) => console.log(data))
+  }, [])
 
   return (
     <div className={classes.root}>
