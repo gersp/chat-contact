@@ -320,11 +320,11 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                 reactions.say("Всё понял, пошел искать контакт!")
                 dataService.createMatchRequest(MatchRequestData(
                         userId = context.session["userId"] as Long?,
-                        topicText = context.session["topic"] as String?,
+                        topicText = context.session["topic"] as String? ?: "",
                         timeRange = context.session["time"] as TimeRestrictionData?
                 )
                 )
-                reactions.go("/ThirdMenu")
+                reactions.go("/ЦиклПодбора")
             }
         }
 
@@ -480,19 +480,33 @@ class ContactBot(private val dataService: DataService) : Scenario() {
             }
         }
 
-        state("ThirdMenu") {
+        state("ЦиклПодбора") {
+            activators {
+                regex("показать кадидат.*")
+            }
             action {
-                reactions.telegram?.say("",
-                        replyMarkup = KeyboardReplyMarkup(
-                                listOf(
-                                        listOf(
-                                                KeyboardButton("Остановить поиск контакта")
-                                        )
-                                ),
-                                resizeKeyboard = true,
-                                oneTimeKeyboard = true
-                        )
-                )
+                val userId = context.session["userId"] as Long
+                val candidates = dataService.getCandidates(userId)
+                if (candidates.isEmpty()) {
+                    reactions.telegram?.say("Список кандидатов пуст", replyMarkup = stopButton())
+                } else {
+                    val c = candidates[0]
+                    reactions.telegram?.say("Есть вот такой кандидат (всего ${candidates.size}):\n" +
+                            "            Имя: ${c.user!!.displayName}\n" +
+                            "            Деятельность: ${c.user.work}\n" +
+                            "            Интересы/Хобби: ${c.user.interestsText}\n" +
+                            "            О себе: ${c.user.aboutUser}",
+                            replyMarkup = KeyboardReplyMarkup(
+                                    listOf(
+                                            listOf(
+                                                    KeyboardButton("Пропустить"),
+                                                    KeyboardButton("Выбрать")
+                                            )
+                                    ),
+                                    resizeKeyboard = true, oneTimeKeyboard = true
+                            )
+                    )
+                }
             }
         }
 
