@@ -254,6 +254,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                         )
                 )
             }
+
             state("Time")
             {
                 activators {
@@ -268,7 +269,9 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                 listOf(
                                                         KeyboardButton("Утро (с 09-12)"),
                                                         KeyboardButton("День (с 12-18)"),
-                                                        KeyboardButton("Вечер (с 18-22)"),
+                                                        KeyboardButton("Вечер (с 18-22)")
+                                                ),
+                                                listOf(
                                                         KeyboardButton("Поздний вечер (с 22-00)"),
                                                         KeyboardButton("Выходные"),
                                                         KeyboardButton("Любое!")
@@ -281,6 +284,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                     }
                     context.session["topic"] = request.input
                 }
+
                 state("Matching")
                 {
                     activators {
@@ -302,7 +306,6 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                         evening = true, night = true, weekends = true)
                         }
                         reactions.go("/StartMatch")
-
                     }
                 }
             }
@@ -510,7 +513,9 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                 KeyboardButton("Лайк"),
                                                 KeyboardButton("Дизлайк")
                                         )
-                                )
+                                ),
+                                resizeKeyboard = true,
+                                oneTimeKeyboard = true
                         )
                 )
             }
@@ -533,7 +538,9 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                 KeyboardButton("Есть контакт!"),
                                                 KeyboardButton("Пропустить")
                                         )
-                                )
+                                ),
+                                resizeKeyboard = true,
+                                oneTimeKeyboard = true
                         )
                 )
                 //TODO: пока тут хардкод, потом заменить на настоящие данные человека
