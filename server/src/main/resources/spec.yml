@@ -186,9 +186,6 @@ components:
           type: string
         aboutUser:
           type: string
-        telegramUserId:
-          type: integer
-          format: int64
 
     MatchRequestData:
       properties:

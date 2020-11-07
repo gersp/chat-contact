@@ -14,8 +14,7 @@ data class User (
         val imageLink: String?,
         val interestsText: String,
         val work: String,
-        val aboutUser: String,
-        val telegramUserId: Long
+        val aboutUser: String
         ) {
 
 }
@@ -36,8 +35,7 @@ fun User.toApiData(): UserData {
             imageLink = this.imageLink,
             interestsText = this.interestsText,
             work = this.work,
-            aboutUser = this.aboutUser,
-            telegramUserId = this.telegramUserId
+            aboutUser = this.aboutUser
     )
 }
 
@@ -48,7 +46,6 @@ fun UserData.toDBData(): User  {
             imageLink = this.imageLink,
             interestsText = this.interestsText ?: "",
             work = this.work?: "",
-            aboutUser = this.aboutUser?: "",
-            telegramUserId = this.telegramUserId ?: 0L
+            aboutUser = this.aboutUser?: ""
     )
 }

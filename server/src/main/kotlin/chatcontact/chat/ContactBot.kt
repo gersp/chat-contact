@@ -201,7 +201,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                         interestsText = context.session["interest"] as String?,
                         aboutUser = context.session["aboutYou"] as String?,
                         // TODO: fill imageLink =
-                        telegramUserId = request.clientId.toLong(),
+                        userId = request.clientId.toLong(),
                         telegramUserName = request.telegram?.message?.from?.username!!
                 ))
                 context.session["userId"] = user.userId
@@ -537,7 +537,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                         bot {
                             apiUrl = chatConfig.telegramApiUrl + "bot"
                             token = chatConfig.token
-                        }.sendMessage(candidate.user!!.telegramUserId!!,
+                        }.sendMessage(candidate.user!!.userId!!,
                                 "Есть контакт! Напишите своему собеседнику - @link.\n" +
                                         " Или подождите пока он сам вам напишет.")
 
