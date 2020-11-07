@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class SystemEndpoint() {
 
-    @GetMapping(value = ["/healthCheck"])
+    @GetMapping(value = ["/api/ping"])
     fun healthCheck(): String {
         return "Ok"
     }
