@@ -24,8 +24,6 @@ interface UserRepository : JpaRepository<User, Long> {
 
 }
 
-
-
 fun User.toApiData(): UserData {
     return UserData(
             userId = this.id,

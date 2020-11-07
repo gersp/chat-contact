@@ -180,6 +180,9 @@ components:
         matchRequestId:
           type: integer
           format: int64
+        userId:
+          type: integer
+          format: int64
         topicText:
           type: string
         timeRange:

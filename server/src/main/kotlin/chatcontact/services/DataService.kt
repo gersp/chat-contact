@@ -1,28 +1,29 @@
 package chatcontact.services
 
+import chatcontact.api.model.MatchRequestData
 import chatcontact.api.model.StatData
 import chatcontact.api.model.UserData
+import chatcontact.dao.*
 import org.springframework.stereotype.Service
 
 @Service
-class DataService {
+class DataService(
+        val users: UserRepository,
+        val matchRequests: MatchRequestRepository,
+        val matchStatuses: MatchStatusRepository
+) {
 
     fun getCounters(): StatData {
-        return StatData(countForms = 14, countMathes = 3)
+        return StatData(users.count(), matchStatuses.count())
     }
 
     fun listUsers(): List<UserData> {
-        val userOne = UserData(1, "Виссарионов Валерий Генадьевич", null, "теннис")
-        val userTwo = UserData(2, "Пупкина Анна Николаевна", null, "код, coн")
-        val userThree = UserData(3, "Васечкин Василий Васильевич", null, "еда повкуснее")
-
-        return listOf(userOne, userTwo, userThree)
+        return users.findAll().map { it.toApiData() }
     }
 
-    fun listCandidates(): List<UserData> {
-        val userOne = UserData(1, "Виссарионов Валерий Генадьевич", null, "теннис")
-        val userTwo = UserData(2, "Пупкина Анна Николаевна", null, "код, coн")
-
-        return listOf(userOne, userTwo)
+    fun createMatchRequest(matchRequestData: MatchRequestData): MatchRequestData {
+        val d = matchRequestData.toDBData(matchRequests.nextId())
+        matchRequests.save(d)
+        return d.toApiData()
     }
 }

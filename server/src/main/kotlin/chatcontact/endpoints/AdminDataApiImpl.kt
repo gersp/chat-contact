@@ -32,7 +32,7 @@ class AdminDataApiImpl(val data: DataService) : AdminDataApiService {
     }
 
     override fun startMatching(userId: Long, matchRequestData: MatchRequestData): MatchRequestData {
-        TODO("Not yet implemented")
+        return data.createMatchRequest(matchRequestData.copy(userId = userId))
     }
 
 }
