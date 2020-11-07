@@ -1,15 +1,18 @@
 package chatcontact.chat
 
+import chatcontact.api.model.UserData
+import chatcontact.dao.User
+import chatcontact.services.DataService
 import com.github.kotlintelegrambot.entities.KeyboardButton
 import com.github.kotlintelegrambot.entities.KeyboardReplyMarkup
+import com.github.kotlintelegrambot.entities.ReplyKeyboardRemove
 import com.justai.jaicf.channel.telegram.telegram
 import com.justai.jaicf.model.scenario.Scenario
-import  com.github.kotlintelegrambot.entities.ReplyKeyboardRemove
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class ContactBot : Scenario() {
+class ContactBot(private val dataService: DataService) : Scenario() {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -170,6 +173,10 @@ class ContactBot : Scenario() {
                                 )
                         )
                 )
+                dataService.createUser(UserData(displayName = context.session["name"] as String?,
+                        work = context.session["work"] as String?,
+                        interestsText = context.session["interest"] as String?,
+                        aboutUser = context.session["aboutYou"] as String?))
             }
         }
 

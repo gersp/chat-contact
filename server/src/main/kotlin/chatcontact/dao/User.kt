@@ -12,7 +12,9 @@ data class User (
         val id: Long,
         val displayName: String,
         val imageLink: String?,
-        val interestsText: String
+        val interestsText: String,
+        val work: String,
+        val aboutUser: String
         ) {
 
 }
@@ -29,15 +31,21 @@ fun User.toApiData(): UserData {
             userId = this.id,
             displayName = this.displayName,
             imageLink = this.imageLink,
-            interestsText = this.interestsText
+            interestsText = this.interestsText,
+            work = this.work,
+            aboutUser = this.aboutUser
+
     )
 }
 
-fun UserData.toDBData(id: Long): User  {
+fun UserData.toDBData(): User  {
     return User(
             id = this.userId!!,
             displayName = this.displayName!!,
             imageLink = this.imageLink,
-            interestsText = this.interestsText ?: ""
+            interestsText = this.interestsText ?: "",
+            work = this.work?: "",
+            aboutUser = this.aboutUser?: ""
+
     )
 }

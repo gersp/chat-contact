@@ -35,13 +35,14 @@ class DataService(
     }
 
     fun createUser(userData: UserData): UserData {
-        val d = userData.toDBData(users.nextId())
+        val user = userData.copy(userId = users.nextId())
+        val d = user.toDBData()
         users.save(d)
         return d.toApiData()
     }
 
     fun updateUser(userId: Long, userData: UserData): UserData {
-        users.save(userData.toDBData(userId))
+        users.save(userData.toDBData())
         return users.getOne(userId).toApiData()
     }
 
