@@ -17,8 +17,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     init {
-        state("Start")
-        {
+        state("Start") {
             activators {
                 regex("/start")
             }
@@ -31,8 +30,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
             }
         }
 
-        state("FirstMenu", modal = true)
-        {
+        state("FirstMenu", modal = true) {
             action {
                 reactions.telegram?.say("Для начала надо заполнить анкету! " +
                         "Она будет показываться другим участникам Chat Contact при подборе собеседника для вас.",
@@ -43,23 +41,23 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                 KeyboardButton("Как это работает?")
                                         )
                                 ),
+                                resizeKeyboard = true,
                                 oneTimeKeyboard = true
                         )
                 )
             }
         }
 
-        state("Info")
-        {
+        state("Info") {
             activators {
-                regex("Заполнить анкету!")
+                regex("Как это работает\\?")
             }
             action {
                 reactions.telegram?.say("Шаг 1: Вы заполняете небольшую анкету о себе\n" +
-                        "Шаг 2: В любое удобное для вас время инициируете поиск собеседника, можете выбрать тему и время для общения\n" +
-                        "Шаг 3: Умные алгоритмы подбирают подходящие под ваш запрос анкеты и предлагают их\n" +
-                        "Шаг 4:  Вы смотрите анкеты собеседников и выбираете те, с кем можно найти общий язык. Бот направит им запрос на контакт с вами\n" +
-                        "Шаг 5: Есть контакт! Если собеседник тоже лайкнул вашу анкету, бот вас сведет и предложит пообщаться.\n" +
+                        "Шаг 2: В любое удобное для Вас время инициируете поиск собеседника, можете выбрать тему и время для общения\n" +
+                        "Шаг 3: Умный алгоритм подбирает подходящие под ваш запрос анкеты и предлагает их\n" +
+                        "Шаг 4: Вы смотрите анкеты собеседников и выбираете интересные. Бот направит им запрос для установления контакта с Вами\n" +
+                        "Шаг 5: Есть контакт! Если собеседник тоже лайкнул вашу анкету, бот обменяет вас контактами.\n" +
                         "Если собеседник не ответил, не расстраивайтесь - бот предложит другую анкету.",
                         replyMarkup = KeyboardReplyMarkup(
                                 listOf(
@@ -67,6 +65,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                 KeyboardButton("Всё понятно, готов начать!")
                                         )
                                 ),
+                                resizeKeyboard = true,
                                 oneTimeKeyboard = true
                         )
                 )
@@ -76,7 +75,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
         state("Form", modal = true) {
             activators {
                 regex("Всё понятно, готов начать!")
-                regex("Заполнить анкекту")
+                regex("Заполнить анкету!")
             }
 
             action {
@@ -138,8 +137,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                 }
             }
 
-            state("InputAboutYou")
-            {
+            state("InputAboutYou") {
                 action {
                     reactions.say("Расскажи немного о себе (в свободной форме)")
                 }
@@ -158,14 +156,13 @@ class ContactBot(private val dataService: DataService) : Scenario() {
             }
         }
 
-        state("Preview")
-        {
+        state("Preview") {
             action {
                 reactions.telegram?.say("Всё сохранил, теперь ваша анкета выглядит так!\n" +
-                        "            Имя: {{ ${context.session["name"]}}\n" +
-                        "            Деятельность: {{${context.session["work"]}}\n" +
-                        "            Интересы/Хобби: {{ ${context.session["interest"]} }}\n" +
-                        "            О себе: {{ ${context.session["aboutYou"]}}}",
+                        "            Имя: ${context.session["name"]}\n" +
+                        "            Деятельность: ${context.session["work"]}\n" +
+                        "            Интересы/Хобби: ${context.session["interest"]}\n" +
+                        "            О себе: ${context.session["aboutYou"]}",
                         replyMarkup = KeyboardReplyMarkup(
                                 listOf(
                                         listOf(
@@ -173,6 +170,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                 KeyboardButton("Редактировать анкету")
                                         )
                                 ),
+                                resizeKeyboard = true,
                                 oneTimeKeyboard = true
                         )
                 )
@@ -183,8 +181,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
             }
         }
 
-        state("Search")
-        {
+        state("Search") {
             action {
                 reactions.telegram?.say("Желаете указать тему и время встречи?",
                         replyMarkup = KeyboardReplyMarkup(
@@ -194,18 +191,27 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                 KeyboardButton("Без ограничений!")
                                         )
                                 ),
+                                resizeKeyboard = true,
                                 oneTimeKeyboard = true
                         )
                 )
             }
         }
 
-        state("Topic")
-        {
+        state("Topic") {
             activators {
                 regex("Задать тему и время")
             }
             action {
+            }
+        }
+
+        state("NoMatch", noContext = true) {
+            activators {
+                catchAll()
+            }
+            action {
+                reactions.say("Для этого запроса нет обработчика")
             }
         }
     }
