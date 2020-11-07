@@ -24,11 +24,10 @@ class TestApiImpl(val embedder: EmbedderService,
     override fun testPush(userId: Long) {
         val user = users.getOne(userId)
 
-        // TODO: почему-то не работает\
         bot {
-            apiUrl = chatConfig.telegramApiUrl
+            apiUrl = chatConfig.telegramApiUrl + "bot"
             token = chatConfig.token
-        }.sendMessage(user.telegramUserId, "Тестовый совсем мессадж")
+        }.sendMessage(user.telegramUserId, "Тестовое совсем сообщение.")
     }
 
 }
