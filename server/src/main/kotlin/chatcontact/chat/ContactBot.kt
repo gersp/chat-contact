@@ -1,7 +1,6 @@
 package chatcontact.chat
 
 import chatcontact.api.model.UserData
-import chatcontact.dao.User
 import chatcontact.services.DataService
 import com.github.kotlintelegrambot.entities.KeyboardButton
 import com.github.kotlintelegrambot.entities.KeyboardReplyMarkup
@@ -20,6 +19,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
         state("Start") {
             activators {
                 regex("/start")
+
             }
             action {
                 reactions.run {
@@ -290,7 +290,9 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                         listOf(
                                                 KeyboardButton("Имя"),
                                                 KeyboardButton("Деятельность"),
-                                                KeyboardButton("Интересы/Хобби"),
+                                                KeyboardButton("Интересы/Хобби")
+                                        ),
+                                        listOf(
                                                 KeyboardButton("О себе"),
                                                 KeyboardButton("Завершить редактирование")
                                         )
@@ -423,9 +425,27 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                     oneTimeKeyboard = true
                             )
                     )
+                    reactions.go("/SecondMenu")
                 }
             }
         }
+
+        state("ThirdMenu") {
+            action {
+                reactions.telegram?.say("",
+                        replyMarkup = KeyboardReplyMarkup(
+                                listOf(
+                                        listOf(
+                                                KeyboardButton("Остановить поиск контакта")
+                                        )
+                                ),
+                                resizeKeyboard = true,
+                                oneTimeKeyboard = true
+                        )
+                )
+            }
+        }
+
         state("NoMatch", noContext = true) {
             activators {
                 catchAll()
