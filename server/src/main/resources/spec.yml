@@ -7,26 +7,26 @@ paths:
   # *******************************************************************************
   #                           Admin
   # *******************************************************************************
-  /api/getCounters:
+  /api/counters:
     get:
       summary: GetCounters
       operationId: getCounters
       tags:
-        - Admin
+        - AdminData
       responses:
         '200':
           description: Result
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CounterData'
+                $ref: '#/components/schemas/StatData'
 
-  /api/listUserForms:
+  /api/user:
     get:
       summary: ListUserForms
-      operationId: listUserForms
+      operationId: listUsers
       tags:
-        - Admin
+        - AdminData
       responses:
         '200':
           description: Result
@@ -35,70 +35,67 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserFormData'
-
-  /api/listCandidates:
-    get:
-      summary: ListCandidantes
-      operationId: listCandidates
-      tags:
-        - Admin
-      responses:
-        '200':
-          description: Result
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserFormData'
-
-  /api/listCandidatesConnections:
-    get:
-      summary: ListCandidatesConnections
-      operationId: listCandidatesConnections
-      tags:
-        - Admin
-      responses:
-        '200':
-          description: Ok
-
-
-
-  # *******************************************************************************
-  #                           User
-  # *******************************************************************************
-
-  /api/user/createForm:
+                  $ref: '#/components/schemas/UserData'
     post:
-      operationId: createForm
+      operationId: createUser
       tags:
-        - User
+        - AdminData
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewUserFormData'
+              $ref: '#/components/schemas/UserData'
       responses:
         '200':
           description: Result
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/UserFormData'
+                $ref: '#/components/schemas/UserData'
 
-  /api/user/startMatching:
+  /api/user/{userId}/matching:
+    get:
+      operationId: getMatching
+      tags:
+        - AdminData
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchRequestData'
     post:
       operationId: startMatching
       tags:
-        - User
+        - AdminData
+      parameters:
+        - $ref: '#/components/parameters/userId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MatchData'
+              $ref: '#/components/schemas/MatchRequestData'
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchRequestData'
+
+  /api/user/{userId}/matching/{matchRequestId}/candidates:
+    get:
+      operationId: getMatchingCandidates
+      tags:
+        - AdminData
+      parameters:
+        - $ref: '#/components/parameters/userId'
+        - $ref: '#/components/parameters/matchRequestId'
       responses:
         '200':
           description: Result
@@ -107,67 +104,32 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserFormData'
-
-  /api/user/exchangeContacts:
-    post:
-      operationId: exchangeContacts
-      tags:
-        - User
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserFormData'
-      responses:
-        '200':
-          description: Result
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MatchStatusData'
-
-  /api/user/collectFeedback:
-    post:
-      operationId: collectFeedback
-      tags:
-        - User
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: string
-      responses:
-        '200':
-          description: Ok
-
-  /api/user/match:
-    post:
-      operationId: match
-      tags:
-        - User
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-                $ref: '#/components/schemas/UserFormData'
-      responses:
-        '200':
-          description: Ok
-
-
-
+                  $ref: '#/components/schemas/CandidateData'
 
 # *******************************************************************************
 #                           Components
 # *******************************************************************************
 
 components:
+  parameters:
+    userId:
+      name: userId
+      in: path
+      description: User identifier.
+      required: true
+      schema:
+        type: integer
+        format: int64
+    matchRequestId:
+      name: matchRequestId
+      in: path
+      description: matchRequest identifier.
+      required: true
+      schema:
+        type: integer
+        format: int64
   schemas:
-    CounterData:
+    StatData:
       properties:
         countForms:
           type: integer
@@ -175,39 +137,54 @@ components:
         countMathes:
           type: integer
           format: int64
-    UserFormData:
+
+    UserData:
       properties:
-        fio:
+        userId:
+          type: integer
+          format: int64
+        displayName:
           type: string
-        image:
+        imageLink:
           type: string
-        interests:
-          type: string
-    MatchData:
-      properties:
-        topic:
-          type: string
-        timestamp:
-          type: string
-    MatchStatusData:
-      properties:
-        matchStatus:
-          $ref: "#/components/schemas/MatchStatus"
-        matchLink:
-          type: string
-    NewUserFormData:
-      properties:
-        fio:
-          type: string
-        image:
-          type: string
-        interests:
+        interestsText:
           type: string
 
-    MatchStatus:
+    MatchRequestData:
+      properties:
+        matchRequestId:
+          type: integer
+          format: int64
+        topicText:
+          type: string
+        timeRange:
+          type: string
+
+    CandidateData:
+      properties:
+        user:
+          $ref: "#/components/schemas/UserData"
+        weight:
+          type: number
+          format: double
+        status:
+          $ref: "#/components/schemas/MatchStatusType"
+        contraStatus:
+          $ref: "#/components/schemas/MatchStatusType"
+
+    MatchResultData:
+      properties:
+        matchStatus:
+          $ref: "#/components/schemas/MatchStatusType"
+        matchLink:
+          type: string
+
+    MatchStatusType:
       type: string
       enum:
         - shown
         - liked
         - disliked
-        - exchangeContasts
+        - contactDirectly
+        - contactOnline
+
