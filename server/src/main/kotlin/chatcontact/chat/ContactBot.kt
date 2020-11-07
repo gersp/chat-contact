@@ -150,5 +150,14 @@ class ContactBot : Scenario() {
                 )
             }
         }
+
+        state("Topic")
+        {
+            activators {
+                regex("Задать тему и время")
+            }
+            action {
+            }
+        }
     }
 }
