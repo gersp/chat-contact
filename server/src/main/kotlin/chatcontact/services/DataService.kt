@@ -3,6 +3,7 @@ package chatcontact.services
 import chatcontact.api.model.*
 import chatcontact.dao.*
 import org.springframework.stereotype.Service
+import java.time.Instant
 
 @Service
 class DataService(
@@ -106,6 +107,18 @@ class DataService(
     fun cleanup(telegramUserId: Long) {
         val user = users.findByTelegramUserId(telegramUserId) ?: return
         users.delete(user)
+    }
+
+    fun setStatus(userId: Long, candidate: CandidateData, status: MatchStatusType) {
+        matchStatuses.save(MatchStatus(
+                id = matchStatuses.nextId(),
+                firstUserId = userId,
+                firstMatchRequestId = this.getActiveMatching(userId)?.id!!,
+                secondUserId = candidate.user!!.userId!!,
+                secondMatchRequestId = this.getActiveMatching(candidate.user.userId!!)?.id!!,
+                status = status.value,
+                timestamp = Instant.now()
+        ))
     }
 
 }

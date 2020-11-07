@@ -1,19 +1,18 @@
 package chatcontact.chat
 
-import chatcontact.api.model.MatchRequestData
-import chatcontact.api.model.TimeRestrictionData
-import chatcontact.api.model.UserData
+import chatcontact.api.model.*
 import chatcontact.services.DataService
 import com.github.kotlintelegrambot.entities.KeyboardButton
 import com.github.kotlintelegrambot.entities.KeyboardReplyMarkup
 import com.github.kotlintelegrambot.entities.ReplyKeyboardRemove
 import com.justai.jaicf.channel.telegram.telegram
 import com.justai.jaicf.model.scenario.Scenario
+import me.ivmg.telegram.bot
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class ContactBot(private val dataService: DataService) : Scenario() {
+class ContactBot(private val dataService: DataService, val chatConfig: ChatConfig) : Scenario() {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -77,6 +76,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
 
         state("Form", modal = true) {
             activators {
+                regex("/form")
                 regex("Всё понятно, готов начать!")
                 regex("Заполнить анкету!")
             }
@@ -161,6 +161,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
 
         state("SecondMenu") {
             activators {
+                regex("/stop")
                 regex("Остановить поиск.*")
             }
             action {
@@ -208,6 +209,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
 
         state("Search") {
             activators {
+                regex("/search")
                 regex("Запустить поиск собеседника!")
             }
             action {
@@ -482,6 +484,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
 
         state("ЦиклПодбора") {
             activators {
+                regex("/next")
                 regex("показать кадидат.*")
                 regex("Проверить кадидат.*")
             }
@@ -501,7 +504,9 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                     ))
                 } else {
                     val c = candidates[0]
-                    reactions.telegram?.say("Есть вот такой кандидат (всего ${candidates.size}):\n" +
+                    context.session["candidate"] = c
+                    dataService.setStatus(userId, candidates[0], MatchStatusType.shown)
+                    reactions.telegram?.say("Есть вот такой кандидат (и ещё ${candidates.size - 1}):\n" +
                             "            Имя: ${c.user!!.displayName}\n" +
                             "            Деятельность: ${c.user.work}\n" +
                             "            Интересы/Хобби: ${c.user.interestsText}\n" +
@@ -518,96 +523,35 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                     )
                 }
             }
-        }
+            state("Like") {
+                activators {
+                    regex("Выбрать.*")
+                }
+                action {
+                    val userId = context.session["userId"] as Long
+                    val candidate = context.session["candidate"] as CandidateData
+                    dataService.setStatus(userId, candidate, MatchStatusType.liked)
+                    // отправить пуш
+                    bot {
+                        apiUrl = chatConfig.telegramApiUrl + "bot"
+                        token = chatConfig.token
+                    }.sendMessage(candidate.user!!.telegramUserId!!, "Вас полайкали. Пишите сюда - ....")
 
-        state("ContactSelection") {
-            activators {
-                regex("select")
-                regex("Дизлайк")
+                    reactions.go("/ЦиклПодбора")
+                }
             }
-            action {
-                reactions.telegram?.say("Подбор собеседника:\n" +
-                        "            Анкета\n" +
-                        "            Имя: Петр Первый\n" +
-                        "            Деятельность: Политик. Каждый день терплю бояр\n" +
-                        "            Интересы: Болото, путешествия, трубка\n" +
-                        "            О себе: Хорош!",
-                        replyMarkup = KeyboardReplyMarkup(
-                                listOf(
-                                        listOf(
-                                                KeyboardButton("Лайк"),
-                                                KeyboardButton("Дизлайк")
-                                        )
-                                ),
-                                resizeKeyboard = true,
-                                oneTimeKeyboard = true
-                        )
-                )
-            }
-        }
-
-        state("ShowLike") {
-            activators {
-                regex("match")
-            }
-            action {
-                reactions.telegram?.say(" К вам проявили интерес!\n" +
-                        "            Анкета\n" +
-                        "            Имя: Екатерина Вторая\n" +
-                        "            Деятельность: Политик и Жена\n" +
-                        "            Интересы: Платья и дворцы\n" +
-                        "            О себе: Хороша!",
-                        replyMarkup = KeyboardReplyMarkup(
-                                listOf(
-                                        listOf(
-                                                KeyboardButton("Есть контакт!"),
-                                                KeyboardButton("Пропустить")
-                                        )
-                                ),
-                                resizeKeyboard = true,
-                                oneTimeKeyboard = true
-                        )
-                )
-                //TODO: пока тут хардкод, потом заменить на настоящие данные человека
-                context.session["match"] = "Екатерина Вторая"
+            state("Dislike") {
+                activators {
+                    regex("Пропустить.*")
+                }
+                action {
+                    val userId = context.session["userId"] as Long
+                    val candidate = context.session["candidate"] as CandidateData
+                    dataService.setStatus(userId, candidate, MatchStatusType.disliked)
+                    reactions.go("/ЦиклПодбора")
+                }
             }
         }
-
-        state("FourthMenu") {
-            activators {
-                regex("Есть контакт!")
-            }
-            action {
-                reactions.telegram?.say("Ура, собеседник найден! Спишитесь с ним и договоритесь о месте общения.",
-                        replyMarkup = KeyboardReplyMarkup(
-                                listOf(
-                                        listOf(
-                                                KeyboardButton("Поделиться контактом с ${context.session["match"]}")
-                                        )
-                                )
-                        )
-                )
-            }
-        }
-
-        state("Like") {
-            activators {
-                regex("Лайк")
-            }
-            action {
-                reactions.telegram?.say("Мы отправили вашу анкету собеседнику, ждём контакта!",
-                        replyMarkup = KeyboardReplyMarkup(
-                                listOf(
-                                        listOf(
-                                                KeyboardButton("Показать ещё анкету"),
-                                                KeyboardButton("Остановить поиск контакта")
-                                        )
-                                )
-                        )
-                )
-            }
-        }
-
 
         state("NoMatch", noContext = true) {
             activators {
