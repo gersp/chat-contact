@@ -48,5 +48,5 @@ embedder:
   url: http://95.217.152.181:8889
 
 chat:
-  tokens:
+  token:
   telegramApiUrl: https://api.telegram.org/

@@ -8,5 +8,4 @@ spring:
     password: postgres
 
 chat:
-  tokens:
-  -
+  token:
