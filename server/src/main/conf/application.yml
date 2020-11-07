@@ -43,3 +43,6 @@ logging:
   file.max-size: 100MB
   long-request-time: 1000
   request-body-characters: 1000
+
+embedder:
+  url: http://95.217.152.181:8889

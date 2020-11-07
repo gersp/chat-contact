@@ -107,6 +107,31 @@ paths:
                   $ref: '#/components/schemas/CandidateData'
 
 # *******************************************************************************
+#                           Test
+# *******************************************************************************
+  /api-test/test-similarity:
+    post:
+      operationId: testSimilarityDetection
+      tags:
+        - Test
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestSimRequestData'
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+
+# *******************************************************************************
 #                           Components
 # *******************************************************************************
 
@@ -202,4 +227,13 @@ components:
         - disliked
         - contactDirectly
         - contactOnline
+
+    TestSimRequestData:
+      properties:
+        first:
+          type: string
+        second:
+          type: array
+          items:
+            type: string
 
