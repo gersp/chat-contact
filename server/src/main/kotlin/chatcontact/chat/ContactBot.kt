@@ -161,7 +161,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
 
         state("SecondMenu") {
             activators {
-                regex("Остановить поиск контакта")
+                regex("Остановить поиск.*")
             }
             action {
                 reactions.telegram?.say("Что делаем дальше?", replyMarkup = KeyboardReplyMarkup(
@@ -483,12 +483,22 @@ class ContactBot(private val dataService: DataService) : Scenario() {
         state("ЦиклПодбора") {
             activators {
                 regex("показать кадидат.*")
+                regex("Проверить кадидат.*")
             }
             action {
                 val userId = context.session["userId"] as Long
                 val candidates = dataService.getCandidates(userId)
                 if (candidates.isEmpty()) {
-                    reactions.telegram?.say("Список кандидатов пуст", replyMarkup = stopButton())
+                    reactions.telegram?.say("Список кандидатов пуст", replyMarkup = KeyboardReplyMarkup(
+                            listOf(
+                                    listOf(
+                                            KeyboardButton("Остановить поиск"),
+                                            KeyboardButton("Проверить кадидатов")
+                                    )
+                            ),
+                            resizeKeyboard = true,
+                            oneTimeKeyboard = true
+                    ))
                 } else {
                     val c = candidates[0]
                     reactions.telegram?.say("Есть вот такой кандидат (всего ${candidates.size}):\n" +
