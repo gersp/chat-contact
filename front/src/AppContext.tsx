@@ -1,11 +1,8 @@
 import React, { createContext } from 'react';
 import axios, { AxiosInstance } from 'axios';
-// import {
-//   AccountApi,
-//   AuthApi,
-//   SessionInfoData,
-//   ChannelsApi
-// } from './api';
+import {
+  AdminApi
+} from './api';
 import { TopNoticeContextData } from './components/TopNotice/TopNoticeContext';
 
 interface AppContextProps {
@@ -27,6 +24,7 @@ export interface AppContextData {
   // authApi: AuthApi;
   // accountApi: AccountApi;
   // channelsApi: ChannelsApi;
+  adminApi: AdminApi;
   axiosInstance: () => AxiosInstance;
 
   // login: (session: SessionInfoData) => void;
@@ -46,6 +44,7 @@ const AppContext = createContext<AppContextData>({
   // authApi: new AuthApi(),
   // channelsApi: new ChannelsApi(),
   // accountApi: new AccountApi(),
+  adminApi: new AdminApi(),
   axiosInstance: () => axios.create(),
   // login: () => {},
   logout: () => {},
@@ -209,6 +208,12 @@ class AppContextProvider extends React.Component<AppContextProps, AppContextStat
           //   this.props.apiUrl,
           //   this.axiosInstance()
           // ),
+           adminApi: new AdminApi(
+            { basePath: this.props.apiUrl },
+            this.props.apiUrl,
+            this.axiosInstance()
+          ),
+          
           axiosInstance: this.axiosInstance,
           // login: this.login,
           logout: this.logout,
