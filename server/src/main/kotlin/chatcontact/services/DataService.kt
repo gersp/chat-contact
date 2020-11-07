@@ -51,6 +51,15 @@ class DataService(
             val weight: Double
     )
 
+    fun getCandidates(userId: Long): List<CandidateData> {
+        val mr = this.getActiveMatching(userId)
+        val candidates = this.getCandidates(userId, mr.id)
+        val c2 = candidates
+                .filter { it.status == null } // показываем только тех, кого ещё не показывали
+                .sortedBy { if (it.contraStatus != null) 0 else 1 } // сначала показываем тех, кто уже лайкнул нас
+        return c2
+    }
+
     fun getCandidates(userId: Long, matchRequestId: Long): List<CandidateData> {
         val mr = matchRequests.getOne(matchRequestId)
         val user = users.getOne(userId)
