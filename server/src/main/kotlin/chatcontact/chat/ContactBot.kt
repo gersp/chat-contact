@@ -158,7 +158,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
 
         state("Preview") {
             action {
-                reactions.telegram?.say("Всё сохранил, теперь ваша анкета выглядит так!\n" +
+                reactions.telegram?.say("Всё сохранил, теперь ваша анкета выглядит так:\n" +
                         "            Имя: ${context.session["name"]}\n" +
                         "            Деятельность: ${context.session["work"]}\n" +
                         "            Интересы/Хобби: ${context.session["interest"]}\n" +
@@ -407,7 +407,8 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                     regex("Завершить редактирование")
                 }
                 action {
-                    reactions.telegram?.say("Всё сохранил, теперь ваша анкета выглядит так!\n" +
+                    // TODO: убрать дублирование
+                    reactions.telegram?.say("Всё сохранил, теперь ваша анкета выглядит так:\n" +
                             "            Имя: ${context.session["name"]}\n" +
                             "            Деятельность: ${context.session["work"]}\n" +
                             "            Интересы/Хобби: ${context.session["interest"]}\n" +
