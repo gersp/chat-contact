@@ -16,7 +16,186 @@ paths:
       responses:
         '200':
           description: Result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterData'
+
+  /api/listUserForms:
+    get:
+      summary: ListUserForms
+      operationId: listUserForms
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserFormData'
+
+  /api/listCandidates:
+    get:
+      summary: ListCandidantes
+      operationId: listCandidates
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserFormData'
+
+  /api/listCandidatesConnections:
+    get:
+      summary: ListCandidatesConnections
+      operationId: listCandidatesConnections
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Ok
+
+
 
   # *******************************************************************************
   #                           User
   # *******************************************************************************
+
+  /api/user/createForm:
+    post:
+      operationId: createForm
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserFormData'
+      responses:
+        '200':
+          description: Ok
+
+  /api/user/startMatching:
+    post:
+      operationId: startMatching
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchData'
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserFormData'
+
+  /api/user/exchangeContacts:
+    post:
+      operationId: exchangeContacts
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserFormData'
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchStatusData'
+
+  /api/user/collectFeedback:
+    post:
+      operationId: collectFeedback
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Ok
+
+  /api/user/match:
+    post:
+      operationId: match
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/UserFormData'
+      responses:
+        '200':
+          description: Ok
+
+
+
+
+# *******************************************************************************
+#                           Components
+# *******************************************************************************
+
+components:
+  schemas:
+    CounterData:
+      properties:
+        countForms:
+          type: integer
+          format: int64
+        countMathes:
+          type: integer
+          format: int64
+    UserFormData:
+      properties:
+        fio:
+          type: string
+        image:
+          type: string
+        interests:
+          type: string
+    MatchData:
+      properties:
+        topic:
+          type: string
+        timestamp:
+          type: string
+    MatchStatusData:
+      properties:
+        matchStatus:
+          $ref: "#/components/schemas/MatchStatus"
+        matchLink:
+          type: string
+
+    MatchStatus:
+      type: string
+      enum:
+        - shown
+        - liked
+        - disliked
+        - exchangeContasts
