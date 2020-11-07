@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties("chat")
 class ChatConfig {
-    lateinit var tokens: List<String>
+    lateinit var token: String
     lateinit var telegramApiUrl: String
 }

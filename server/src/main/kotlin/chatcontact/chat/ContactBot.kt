@@ -177,7 +177,10 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                 dataService.createUser(UserData(displayName = context.session["name"] as String?,
                         work = context.session["work"] as String?,
                         interestsText = context.session["interest"] as String?,
-                        aboutUser = context.session["aboutYou"] as String?))
+                        aboutUser = context.session["aboutYou"] as String?,
+                        // TODO: fill imageLink =
+                        telegramUserId = request.clientId.toLong()
+                        ))
             }
         }
 

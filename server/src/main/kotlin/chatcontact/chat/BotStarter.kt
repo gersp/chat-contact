@@ -15,25 +15,23 @@ class BotStarter(val bot: ContactBot,
 
     @PostConstruct
     fun init() {
-        config.tokens.forEach {
-            val bot = BotEngine(
-                    model = bot.model,
-                    //defaultContextManager = ContextManager(
-                      //      it, botContextRepository
-                    //),
-                    activators = arrayOf(
-                            RegexActivator,
-                            BaseEventActivator,
-                            CatchAllActivator
-                    )
-            )
+        val bot = BotEngine(
+                model = bot.model,
+                //defaultContextManager = ContextManager(
+                  //      it, botContextRepository
+                //),
+                activators = arrayOf(
+                        RegexActivator,
+                        BaseEventActivator,
+                        CatchAllActivator
+                )
+        )
 
-            TelegramChannel(
-                    bot,
-                    it,
-                    telegramApiUrl = config.telegramApiUrl
-            ).run()
-        }
+        TelegramChannel(
+                bot,
+                config.token,
+                telegramApiUrl = config.telegramApiUrl
+        ).run()
 
     }
 

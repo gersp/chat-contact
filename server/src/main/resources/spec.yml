@@ -130,6 +130,16 @@ paths:
                 items:
                   type: string
 
+  /api-test/test-push/{userId}:
+    post:
+      operationId: testPush
+      tags:
+        - Test
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: Result
 
 # *******************************************************************************
 #                           Components
@@ -178,6 +188,9 @@ components:
           type: string
         aboutUser:
           type: string
+        telegramUserId:
+          type: integer
+          format: int64
 
     MatchRequestData:
       properties:
