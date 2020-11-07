@@ -273,6 +273,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                             }
                             action {
                                 reactions.say("Всё понял, пошел искать контакт!")
+                                reactions.go("/ThirdMenu")
                             }
                         }
                     }
