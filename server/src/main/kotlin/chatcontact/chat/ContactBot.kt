@@ -205,29 +205,48 @@ class ContactBot(private val dataService: DataService) : Scenario() {
             }
         }
 
-        state("Topic") {
+        state("Topic"){
             activators {
                 regex("Задать тему и время")
             }
             action {
-                state("Topic")
-                {
-                    activators {
-                        regex("Задать тему и время")
-                    }
-                    action {
+                reactions.telegram?.say(
+                        "Укажите тему",
+                        replyMarkup = KeyboardReplyMarkup(
+                                listOf(
+                                        listOf(
+                                                KeyboardButton("Кино и вино"),
+                                                KeyboardButton("Путешествия"),
+                                                KeyboardButton("Работа и деньги"),
+                                                KeyboardButton("Еда"),
+                                                KeyboardButton("Спорт и красота"),
+                                                KeyboardButton("Пообщаться за жизнь"),
+                                                KeyboardButton("Любая!")
+                                        )
+                                ),
+                                oneTimeKeyboard = true,
+                                resizeKeyboard = true
+                        )
+                )
+            }
+            state("Time")
+            {
+                activators {
+                    regex(".*")
+                }
+                action {
+                    reactions.run {
                         reactions.telegram?.say(
-                                "Укажите тему",
+                                "Укажите время",
                                 replyMarkup = KeyboardReplyMarkup(
                                         listOf(
                                                 listOf(
-                                                        KeyboardButton("Кино и вино"),
-                                                        KeyboardButton("Путешествия"),
-                                                        KeyboardButton("Работа и деньги"),
-                                                        KeyboardButton("Еда"),
-                                                        KeyboardButton("Спорт и красота"),
-                                                        KeyboardButton("Пообщаться за жизнь"),
-                                                        KeyboardButton("Любая!")
+                                                        KeyboardButton("Утро (с 09-12)"),
+                                                        KeyboardButton("День (с 12-18)"),
+                                                        KeyboardButton("Вечер (с 18-22)"),
+                                                        KeyboardButton("Поздний вечер (с 22-00)"),
+                                                        KeyboardButton("Выходные"),
+                                                        KeyboardButton("Любое!")
                                                 )
                                         ),
                                         oneTimeKeyboard = true,
@@ -235,47 +254,20 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                 )
                         )
                     }
-                    state("Time")
-                    {
-                        activators {
-                            regex(".*")
-                        }
-                        action {
-                            reactions.run {
-                                reactions.telegram?.say(
-                                        "Укажите время",
-                                        replyMarkup = KeyboardReplyMarkup(
-                                                listOf(
-                                                        listOf(
-                                                                KeyboardButton("Утро (с 09-12)"),
-                                                                KeyboardButton("День (с 12-18)"),
-                                                                KeyboardButton("Вечер (с 18-22)"),
-                                                                KeyboardButton("Поздний вечер (с 22-00)"),
-                                                                KeyboardButton("Выходные"),
-                                                                KeyboardButton("Любое!")
-                                                        )
-                                                ),
-                                                oneTimeKeyboard = true,
-                                                resizeKeyboard = true
-                                        )
-                                )
-                            }
-                        }
-                        state("Matching")
-                        {
-                            activators {
-                                regex("Утро (с 09-12)")
-                                regex("День (с 12-18)")
-                                regex("Вечер (с 18-22)")
-                                regex("Поздний вечер (с 22-00)")
-                                regex("Выходные")
-                                regex("Любое!")
-                            }
-                            action {
-                                reactions.say("Всё понял, пошел искать контакт!")
-                                reactions.go("/ThirdMenu")
-                            }
-                        }
+                }
+                state("Matching")
+                {
+                    activators {
+                        regex("Утро (с 09-12)")
+                        regex("День (с 12-18)")
+                        regex("Вечер (с 18-22)")
+                        regex("Поздний вечер (с 22-00)")
+                        regex("Выходные")
+                        regex("Любое!")
+                    }
+                    action {
+                        reactions.say("Всё понял, пошел искать контакт!")
+                        reactions.go("/ThirdMenu")
                     }
                 }
             }
