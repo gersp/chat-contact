@@ -288,10 +288,10 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                 state("Matching")
                 {
                     activators {
-                        regex("Утро (с 09-12)")
-                        regex("День (с 12-18)")
-                        regex("Вечер (с 18-22)")
-                        regex("Поздний вечер (с 22-00)")
+                        regex("Утро \\(с 09-12\\)")
+                        regex("День \\(с 12-18\\)")
+                        regex("Вечер \\(с 18-22\\)")
+                        regex("Поздний вечер \\(с 22-00\\)")
                         regex("Выходные")
                         regex("Любое!")
                     }
