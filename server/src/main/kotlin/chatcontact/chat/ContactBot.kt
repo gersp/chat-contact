@@ -178,7 +178,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                         work = context.session["work"] as String?,
                         interestsText = context.session["interest"] as String?,
                         aboutUser = context.session["aboutYou"] as String?))
-                context.session["userForm"] = user
+                context.session["userId"] = user.userId
             }
         }
 
@@ -275,109 +275,160 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                     }
                 }
             }
-            state("FixForm") {
+        }
+        state("FixForm") {
+            activators {
+                regex("Редактировать анкету")
+            }
+            action {
+                reactions.telegram?.say("Выберите поле, которое, хотите поменять.",
+                        replyMarkup = KeyboardReplyMarkup(
+                                listOf(
+                                        listOf(
+                                                KeyboardButton("Имя"),
+                                                KeyboardButton("Деятельность"),
+                                                KeyboardButton("Интересы/Хобби"),
+                                                KeyboardButton("О себе"),
+                                                KeyboardButton("Завершить редактирование")
+                                        )
+                                ),
+                                oneTimeKeyboard = true,
+                                resizeKeyboard = true
+                        )
+                )
+            }
+            state("ChangeInputName") {
                 activators {
-                    regex("Редактировать анкету")
+                    regex("Имя")
                 }
                 action {
-                    reactions.telegram?.say("Выберите поле, которое, хотите поменять.",
-                            replyMarkup = KeyboardReplyMarkup(
-                                    listOf(
-                                            listOf(
-                                                    KeyboardButton("Имя"),
-                                                    KeyboardButton("Деятельность"),
-                                                    KeyboardButton("Интересы/Хобби"),
-                                                    KeyboardButton("О себе"),
-                                                    KeyboardButton("Завершить редактирование")
-                                            )
-                                    ),
-                                    oneTimeKeyboard = true,
-                                    resizeKeyboard = true
+                    reactions.telegram?.say("Как тебя зовут?",
+                            replyMarkup = ReplyKeyboardRemove())
+                }
+
+                state("ChangeInputNameResponse") {
+                    activators {
+                        regex(".*")
+                    }
+                    action {
+                        reactions.run {
+                            context.session["name"] = request.input
+                            dataService.updateUser(dataService
+                                    .getUser(context.session["userId"] as Long)
+                                    .copy(displayName = request.input)
                             )
-                    )
-                }
-                state("ChangeInputName") {
-                    action {
-                        reactions.telegram?.say("Как тебя зовут?",
-                                replyMarkup = ReplyKeyboardRemove())
-                    }
-
-                    state("ChangeInputNameResponse") {
-                        activators {
-                            regex(".*")
-                        }
-                        action {
-                            reactions.run {
-                                context.session["name"] = request.input
-                                go("/FixForm")
-                            }
+                            go("/FixForm")
                         }
                     }
-                }
-
-                state("ChangeInputWork") {
-                    action {
-                        reactions.say("Расскажи немного о своей рабочей деятельности (кем работаешь, что делаешь и т.д.)")
-                    }
-
-                    state("ChangeInputWorkResponse") {
-                        activators {
-                            regex(".*")
-                        }
-                        action {
-                            reactions.run {
-                                context.session["work"] = request.input
-                                go("/FixForm")
-                            }
-                        }
-                    }
-                }
-
-                state("ChangeInputInterests")
-                {
-                    action {
-                        reactions.say("Чем занимаешься в свободное время ? (Интересы, хобби)")
-                    }
-                    state("ChangeInputInterestsResponse") {
-                        activators {
-                            regex(".*")
-                        }
-                        action {
-                            reactions.run {
-                                context.session["interest"] = request.input
-                                go("/FixForm")
-                            }
-                        }
-                    }
-                }
-
-                state("ChangeInputAboutYou")
-                {
-                    action {
-                        reactions.say("Расскажи немного о себе (в свободной форме)")
-                    }
-                    state("ChangeInputAboutYouInterestsResponse") {
-                        activators {
-                            regex(".*")
-                        }
-                        action {
-                            reactions.run {
-                                context.session["aboutYou"] = request.input
-                                go("/FixForm")
-                            }
-                        }
-                    }
-
                 }
             }
 
-            state("NoMatch", noContext = true) {
+            state("ChangeInputWork") {
                 activators {
-                    catchAll()
+                    regex("Деятельность")
                 }
                 action {
-                    reactions.say("Для этого запроса нет обработчика")
+                    reactions.say("Расскажи немного о своей рабочей деятельности (кем работаешь, что делаешь и т.д.)")
                 }
+
+                state("ChangeInputWorkResponse") {
+                    activators {
+                        regex(".*")
+                    }
+                    action {
+                        reactions.run {
+                            context.session["work"] = request.input
+                            dataService.updateUser(dataService
+                                    .getUser(context.session["userId"] as Long)
+                                    .copy(work = request.input)
+                            )
+                            go("/FixForm")
+                        }
+                    }
+                }
+            }
+
+            state("ChangeInputInterests")
+            {
+                activators {
+                    regex("Интересы/Хобби")
+                }
+                action {
+                    reactions.say("Чем занимаешься в свободное время ? (Интересы, хобби)")
+                }
+                state("ChangeInputInterestsResponse") {
+                    activators {
+                        regex(".*")
+                    }
+                    action {
+                        reactions.run {
+                            context.session["interest"] = request.input
+                            dataService.updateUser(dataService
+                                    .getUser(context.session["userId"] as Long)
+                                    .copy(interestsText = request.input)
+                            )
+                            go("/FixForm")
+                        }
+                    }
+                }
+            }
+
+            state("ChangeInputAboutYou")
+            {
+                activators {
+                    regex("О себе")
+                }
+                action {
+                    reactions.say("Расскажи немного о себе (в свободной форме)")
+                }
+                state("ChangeInputAboutYouInterestsResponse") {
+                    activators {
+                        regex(".*")
+                    }
+                    action {
+                        reactions.run {
+                            context.session["aboutYou"] = request.input
+                            dataService.updateUser(dataService
+                                    .getUser(context.session["userId"] as Long)
+                                    .copy(aboutUser = request.input)
+                            )
+                            go("/FixForm")
+                        }
+                    }
+                }
+            }
+
+            state("FixPreview")
+            {
+                activators {
+                    regex("Завершить редактирование")
+                }
+                action {
+                    reactions.telegram?.say("Всё сохранил, теперь ваша анкета выглядит так!\n" +
+                            "            Имя: ${context.session["name"]}\n" +
+                            "            Деятельность: ${context.session["work"]}\n" +
+                            "            Интересы/Хобби: ${context.session["interest"]}\n" +
+                            "            О себе: ${context.session["aboutYou"]}",
+                            replyMarkup = KeyboardReplyMarkup(
+                                    listOf(
+                                            listOf(
+                                                    KeyboardButton("Запустить поиск собеседника!"),
+                                                    KeyboardButton("Редактировать анкету")
+                                            )
+                                    ),
+                                    resizeKeyboard = true,
+                                    oneTimeKeyboard = true
+                            )
+                    )
+                }
+            }
+        }
+        state("NoMatch", noContext = true) {
+            activators {
+                catchAll()
+            }
+            action {
+                reactions.say("Для этого запроса нет обработчика")
             }
         }
     }
