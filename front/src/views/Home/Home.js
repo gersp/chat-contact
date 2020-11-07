@@ -8,7 +8,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper
+  Paper,
+  Button
 } from '@material-ui/core';
 
 import { AppContext } from 'AppContext';
@@ -52,6 +53,11 @@ const useStyles = makeStyles(theme => ({
     width: 80,
     height: 80,
     borderRadius: 8
+  },
+  toolbar: {
+    padding: '10px 0',
+    display: 'flex',
+    justifyContent: 'flex-end',
   }
 }));
 
@@ -67,7 +73,7 @@ const Home = () => {
       .then(({data}) => setCounters(data))
     appContext.adminDataApi.listUsers()
       .then(({data}) => setUsers(data))
-    appContext.adminDataApi.getMatching(1)
+    appContext.adminDataApi.getMatchingCandidates(1, 1)
       .then(({data}) => console.log(data))
   }, [])
 
@@ -108,7 +114,7 @@ const Home = () => {
         </TableHead>
         <TableBody>
           {users.map((user, index) => (
-            <TableRow key={index}>
+            <TableRow key={index} onClick={() => appContext.history.push('/matching/' + user.userId)}>
               <TableCell component="th" scope="row">
                 {user.userId}
               </TableCell>
