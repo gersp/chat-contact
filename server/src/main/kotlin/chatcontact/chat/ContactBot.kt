@@ -1,5 +1,7 @@
 package chatcontact.chat
 
+import chatcontact.api.model.MatchRequestData
+import chatcontact.api.model.TimeRestrictionData
 import chatcontact.api.model.UserData
 import chatcontact.services.DataService
 import com.github.kotlintelegrambot.entities.KeyboardButton
@@ -277,6 +279,7 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                 )
                         )
                     }
+                    context.session["topic"] = request.input
                 }
                 state("Matching")
                 {
@@ -289,12 +292,32 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                         regex("Любое!")
                     }
                     action {
-                        reactions.say("Всё понял, пошел искать контакт!")
-                        reactions.go("/ThirdMenu")
+                        context.session["time"] = request.input
+                        reactions.go("/StartMatch")
+
                     }
                 }
             }
         }
+
+        state("StartMatch") {
+            activators {
+                regex("Без ограничений!")
+            }
+            action {
+                reactions.say("Всё понял, пошел искать контакт!")
+                dataService.createMatchRequest(MatchRequestData(
+                        userId = context.session["userId"] as Long?,
+                        topicText = context.session["topic"] as String?,
+                        timeRange = TimeRestrictionData(
+                               // TODO timerestriction processing
+                        )
+                )
+                )
+                reactions.go("/ThirdMenu")
+            }
+        }
+
         state("FixForm") {
             activators {
                 regex("Редактировать анкету")
