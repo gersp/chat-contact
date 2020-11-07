@@ -49,4 +49,4 @@ embedder:
 
 chat:
   tokens:
-  telegramApiUrl:
+  telegramApiUrl: https://api.telegram.org/

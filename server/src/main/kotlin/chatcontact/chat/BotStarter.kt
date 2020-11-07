@@ -10,32 +10,31 @@ import javax.annotation.PostConstruct
 
 @Service
 class BotStarter(val bot: ContactBot,
-                     val config: ChatConfig
-    ) {
+                 val config: ChatConfig
+) {
 
-       /* @PostConstruct
-        fun init() {
-            config.tokens.forEach {
-                val bot = BotEngine(
-                        model = bot.model,
-                        defaultContextManager = ContextManager(
-                                it, botContextRepository
-                        ),
-                        activators = arrayOf(
-                                RegexActivator,
-                                BaseEventActivator,
-                                CatchAllActivator
-                        )
-                )
+    @PostConstruct
+    fun init() {
+        config.tokens.forEach {
+            val bot = BotEngine(
+                    model = bot.model,
+                    //defaultContextManager = ContextManager(
+                      //      it, botContextRepository
+                    //),
+                    activators = arrayOf(
+                            RegexActivator,
+                            BaseEventActivator,
+                            CatchAllActivator
+                    )
+            )
 
-                TelegramChannel(
-                        bot,
-                        it,
-                        telegramApiUrl = config.telegramApiUrl
-                ).run()
-            }
-
+            TelegramChannel(
+                    bot,
+                    it,
+                    telegramApiUrl = config.telegramApiUrl
+            ).run()
         }
 
-    }*/
+    }
+
 }

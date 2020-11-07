@@ -4,6 +4,7 @@ import com.github.kotlintelegrambot.entities.KeyboardButton
 import com.github.kotlintelegrambot.entities.KeyboardReplyMarkup
 import com.justai.jaicf.channel.telegram.telegram
 import com.justai.jaicf.model.scenario.Scenario
+import  com.github.kotlintelegrambot.entities.ReplyKeyboardRemove
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -35,7 +36,7 @@ class ContactBot : Scenario() {
                         replyMarkup = KeyboardReplyMarkup(
                                 listOf(
                                         listOf(
-                                                KeyboardButton("Заполнить анкету!", requestContact = true),
+                                                KeyboardButton("Заполнить анкету!"),
                                                 KeyboardButton("Как это работает?")
                                         )
                                 )
@@ -67,30 +68,49 @@ class ContactBot : Scenario() {
             }
         }
 
-        state("Form") {
+        state("Form", modal = true) {
+            activators {
+                regex("Всё понятно, готов начать!")
+                regex("Заполнить анкекту")
+            }
 
-            state("InputName")
-            {
-                activators {
-                    regex("Всё понятно, готов начать!")
-                    regex("Заполнить анкекту")
-                }
+            action {
+                reactions.go("/Form/InputName")
+            }
+
+            state("InputName") {
                 action {
-                    reactions.say("Как тебя зовут?")
-                    reactions.run {
-                        context.session["name"] = request.input
-                        go("/Form/InputWork")
+                    reactions.telegram?.say("Как тебя зовут?",
+                            replyMarkup = ReplyKeyboardRemove())
+                }
+
+                state("InputNameResponse") {
+                    activators {
+                        regex(".*")
+                    }
+                    action {
+                        reactions.run {
+                            context.session["name"] = request.input
+                            go("/Form/InputWork")
+                        }
                     }
                 }
             }
 
-            state("InputWork")
-            {
+            state("InputWork") {
                 action {
                     reactions.say("Расскажи немного о своей рабочей деятельности (кем работаешь, что делаешь и т.д.)")
-                    reactions.run {
-                        context.session["work"] = request.input
-                        go("/Form/InputInterests")
+                }
+
+                state("InputWorkResponse") {
+                    activators {
+                        regex(".*")
+                    }
+                    action {
+                        reactions.run {
+                            context.session["work"] = request.input
+                            go("/Form/InputInterests")
+                        }
                     }
                 }
             }
@@ -99,21 +119,37 @@ class ContactBot : Scenario() {
             {
                 action {
                     reactions.say("Чем занимаешься в свободное время ? (Интересы, хобби)")
-                    reactions.run {
-                        context.session["interest"] = request.input
-                        go("/Form/InputAboutYou")
+                }
+                state("InputInterestsResponse") {
+                    activators {
+                        regex(".*")
+                    }
+                    action {
+                        reactions.run {
+                            context.session["interest"] = request.input
+                            go("/Form/InputAboutYou")
+                        }
                     }
                 }
             }
+
             state("InputAboutYou")
             {
                 action {
                     reactions.say("Расскажи немного о себе (в свободной форме)")
-                    reactions.run {
-                        context.session["aboutYou"]
-                        go("/Preview")
+                }
+                state("InputAboutYouInterestsResponse") {
+                    activators {
+                        regex(".*")
+                    }
+                    action {
+                        reactions.run {
+                            context.session["aboutYou"] = request.input
+                            go("/Preview")
+                        }
                     }
                 }
+
             }
         }
 
