@@ -9,7 +9,6 @@ paths:
   # *******************************************************************************
   /api/counters:
     get:
-      summary: GetCounters
       operationId: getCounters
       tags:
         - AdminData
@@ -23,7 +22,6 @@ paths:
 
   /api/user:
     get:
-      summary: ListUserForms
       operationId: listUsers
       tags:
         - AdminData
@@ -204,6 +202,7 @@ components:
           type: string
         active:
           type: boolean
+          default: true
         timeRange:
           $ref: "#/components/schemas/TimeRestrictionData"
 
@@ -211,14 +210,19 @@ components:
       properties:
         morning:
           type: boolean
+          default: false
         daytime:
           type: boolean
+          default: false
         evening:
           type: boolean
+          default: false
         night:
           type: boolean
+          default: false
         weekends:
           type: boolean
+          default: false
 
 
 

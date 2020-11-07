@@ -21,7 +21,7 @@ class AdminDataApiImpl(val data: DataService) : AdminDataApiService {
     }
 
     override fun getMatching(userId: Long): MatchRequestData {
-        return data.getActiveMatching(userId).toApiData()
+        return data.getActiveMatching(userId)?.toApiData() ?: MatchRequestData()
     }
 
     override fun getMatchingCandidates(userId: Long, matchRequestId: Long): List<CandidateData> {

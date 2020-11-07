@@ -37,10 +37,10 @@ interface MatchRequestRepository : JpaRepository<MatchRequest, Long> {
     @Query("SELECT nextval('match_request_id_seq')", nativeQuery = true)
     fun nextId(): Long
 
-    @Query("SELECT * FROM match_requests WHERE user_id = :userId AND active IS TRUE ORDER BY DESC timestamp LIMIT 1", nativeQuery = true)
-    fun findLastActiveByUser(userId: Long): MatchRequest
+    @Query("SELECT * FROM match_requests WHERE user_id = :userId AND active IS TRUE ORDER BY timestamp DESC LIMIT 1", nativeQuery = true)
+    fun findLastActiveByUser(userId: Long): MatchRequest?
 
-    @Query("SELECT * FROM match_requests WHERE user_id = :userId ORDER BY DESC timestamp", nativeQuery = true)
+    @Query("SELECT * FROM match_requests WHERE user_id = :userId ORDER BY timestamp DESC", nativeQuery = true)
     fun findByUserId(userId: Long): List<MatchRequest>
 }
 
@@ -67,19 +67,20 @@ fun TimeRestrictionData.toDBData(): TimeRestriction {
 fun MatchRequest.toApiData(): MatchRequestData {
     return MatchRequestData(
             matchRequestId = this.id,
+            userId = this.userId,
             topicText = this.topicText,
             timeRange = this.timeRange.toApiData(),
             active = this.active
     )
 }
 
-fun MatchRequestData.toDBData(id: Long): MatchRequest {
+fun MatchRequestData.toDBData(): MatchRequest {
     return MatchRequest(
             id = this.matchRequestId!!,
             userId = this.userId!!,
             topicText = this.topicText!!,
             timeRange = this.timeRange?.toDBData() ?: TimeRestriction(),
             timestamp = Instant.now(),
-            active = this.active ?: false
+            active = this.active ?: true
     )
 }

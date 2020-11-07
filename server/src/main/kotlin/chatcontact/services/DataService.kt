@@ -21,12 +21,12 @@ class DataService(
     }
 
     fun createMatchRequest(matchRequestData: MatchRequestData): MatchRequestData {
-        val d = matchRequestData.toDBData(matchRequests.nextId())
+        val d = matchRequestData.copy(matchRequestId = matchRequests.nextId()).toDBData()
         matchRequests.save(d)
         return d.toApiData()
     }
 
-    fun getActiveMatching(userId: Long): MatchRequest {
+    fun getActiveMatching(userId: Long): MatchRequest? {
         return matchRequests.findLastActiveByUser(userId)
     }
 
@@ -57,7 +57,7 @@ class DataService(
     )
 
     fun getCandidates(userId: Long): List<CandidateData> {
-        val mr = this.getActiveMatching(userId)
+        val mr = this.getActiveMatching(userId) ?: return emptyList()
         val candidates = this.getCandidates(userId, mr.id)
         val c2 = candidates
                 .filter { it.status == null } // показываем только тех, кого ещё не показывали
