@@ -1,6 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { Card, Typography } from '@material-ui/core';
+import { 
+  Card, Typography,
+  Table,
+  TableCell,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper
+} from '@material-ui/core';
 
 import { AppContext } from 'AppContext';
 
@@ -38,6 +47,11 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center'
 
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 8
   }
 }));
 
@@ -46,11 +60,20 @@ const Home = () => {
   const appContext = useContext(AppContext);
 
   const [counters, setCounters] = useState();
+  const [users, setUsers] = useState();
 
   useEffect(() => {
-    appContext.adminApi.getCounters()
+    appContext.adminDataApi.getCounters()
+      .then(({data}) => setCounters(data))
+    appContext.adminDataApi.listUsers()
+      .then(({data}) => setUsers(data))
+    appContext.adminDataApi.getMatching(1)
       .then(({data}) => console.log(data))
   }, [])
+
+  if (!counters || !users) {
+    return null
+  }
 
   return (
     <div className={classes.root}>
@@ -60,7 +83,7 @@ const Home = () => {
             Количество анкет
           </Typography>
           <Typography className={classes.counter__count}>
-            148
+            {counters.countForms}
           </Typography>
         </Card>
         <Card className={classes.counter}>
@@ -68,10 +91,35 @@ const Home = () => {
             Количество матчей
           </Typography>
           <Typography className={classes.counter__count}>
-            56
+            {counters.countMathes}
           </Typography>
         </Card>
       </div>
+
+      <TableContainer component={Paper}>
+      <Table className={classes.table} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>ID</TableCell>
+            <TableCell >Имя</TableCell>
+            <TableCell >Фото</TableCell>
+            <TableCell >Интересы</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {users.map((user, index) => (
+            <TableRow key={index}>
+              <TableCell component="th" scope="row">
+                {user.userId}
+              </TableCell>
+              <TableCell>{user.displayName}</TableCell>
+              <TableCell><img className={classes.avatar} src={user.imageLink || 'https://www.allthetests.com/quiz22/picture/pic_1171831236_1.png'}/> </TableCell>
+              <TableCell>{user.interestsText}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
     </div>
   )
 }
