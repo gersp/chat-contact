@@ -201,7 +201,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                         interestsText = context.session["interest"] as String?,
                         aboutUser = context.session["aboutYou"] as String?,
                         // TODO: fill imageLink =
-                        telegramUserId = request.clientId.toLong()
+                        userId = request.clientId.toLong()
                 ))
                 context.session["userId"] = user.userId
             }
@@ -535,7 +535,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                     bot {
                         apiUrl = chatConfig.telegramApiUrl + "bot"
                         token = chatConfig.token
-                    }.sendMessage(candidate.user!!.telegramUserId!!, "Вас полайкали. Пишите сюда - ....")
+                    }.sendMessage(candidate.user!!.userId!!, "Вас полайкали. Пишите сюда - ....")
 
                     reactions.go("/ЦиклПодбора")
                 }

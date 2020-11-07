@@ -27,7 +27,7 @@ class TestApiImpl(val embedder: EmbedderService,
         bot {
             apiUrl = chatConfig.telegramApiUrl + "bot"
             token = chatConfig.token
-        }.sendMessage(user.telegramUserId, "Тестовое совсем сообщение.")
+        }.sendMessage(user.id, "Тестовое совсем сообщение.")
     }
 
 }
