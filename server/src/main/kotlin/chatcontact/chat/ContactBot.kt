@@ -138,7 +138,7 @@ class ContactBot : Scenario() {
         state("Search")
         {
             action {
-                reactions.telegram?.say("Желаете указать тему или время встречи?",
+                reactions.telegram?.say("Желаете указать тему и время встречи?",
                         replyMarkup = KeyboardReplyMarkup(
                                 listOf(
                                         listOf(
