@@ -41,9 +41,13 @@ class DataService(
         return d.toApiData()
     }
 
-    fun updateUser(userId: Long, userData: UserData): UserData {
-        users.save(userData.toDBData())
+    fun getUser(userId: Long): UserData {
         return users.getOne(userId).toApiData()
+    }
+
+    fun updateUser(userData: UserData): UserData {
+        val user = users.save(userData.toDBData())
+        return user.toApiData()
     }
 
     class Candidate(
