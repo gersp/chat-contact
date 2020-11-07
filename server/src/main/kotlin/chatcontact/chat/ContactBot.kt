@@ -42,7 +42,8 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                 KeyboardButton("Заполнить анкету!"),
                                                 KeyboardButton("Как это работает?")
                                         )
-                                )
+                                ),
+                                oneTimeKeyboard = true
                         )
                 )
             }
@@ -65,7 +66,8 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                         listOf(
                                                 KeyboardButton("Всё понятно, готов начать!")
                                         )
-                                )
+                                ),
+                                oneTimeKeyboard = true
                         )
                 )
             }
@@ -170,7 +172,8 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                 KeyboardButton("Запустить поиск собеседника!"),
                                                 KeyboardButton("Редактировать анкету")
                                         )
-                                )
+                                ),
+                                oneTimeKeyboard = true
                         )
                 )
                 dataService.createUser(UserData(displayName = context.session["name"] as String?,
@@ -190,7 +193,8 @@ class ContactBot(private val dataService: DataService) : Scenario() {
                                                 KeyboardButton("Задать тему и время"),
                                                 KeyboardButton("Без ограничений!")
                                         )
-                                )
+                                ),
+                                oneTimeKeyboard = true
                         )
                 )
             }
