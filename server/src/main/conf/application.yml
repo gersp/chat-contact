@@ -5,7 +5,6 @@ server:
       timeout: 86400
   externalUrl: http://localhost:7040
 
-
 spring:
   main:
     banner-mode: "off"
@@ -19,7 +18,7 @@ spring:
     name: chatcontact
 
   pid:
-    file: /opt/telechat/bin/${id:application}.pid
+    file: /opt/chatcontact/bin/${id:application}.pid
     fail-on-write-error: true
 
   mvc:
@@ -35,9 +34,11 @@ spring:
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       ddl-auto: none #create #update
 
+  flyway:
+    enabled: false
 
 logging:
-  file: ${log.dir:/tmp}/chatcontact.main.log
+  file: ${log.dir:/tmp}/main.log
   file.max-history: 90
   file.max-size: 100MB
   long-request-time: 1000

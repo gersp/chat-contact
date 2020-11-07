@@ -130,6 +130,11 @@
             <artifactId>hibernate-types-52</artifactId>
             <version>2.4.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>6.5.5</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -175,37 +180,6 @@
                     <groupId>org.jetbrains.kotlin</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-       <!-- <dependency>
-            <groupId>com.github.seik.kotlin-telegram-bot</groupId>
-            <artifactId>dispatcher</artifactId>
-            <version>4.6.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>kotlin-stdlib</artifactId>
-                    <groupId>org.jetbrains.kotlin</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>okhttp</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>logging-interceptor</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency> -->
-
-        <!--QR Codes-->
-        <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>core</artifactId>
-            <version>3.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>javase</artifactId>
-            <version>3.3.0</version>
         </dependency>
 
         <!--Logging-->
