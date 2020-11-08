@@ -91,6 +91,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                             replyMarkup = ReplyKeyboardRemove())
                 }
 
+                handleStart()
                 state("InputNameResponse") {
                     activators {
                         regex(".*")
@@ -108,6 +109,8 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 action {
                     reactions.say("Расскажи немного о своей рабочей деятельности (кем работаешь, что делаешь и т.д.)")
                 }
+
+                handleStart()
 
                 state("InputWorkResponse") {
                     activators {
@@ -127,6 +130,8 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 action {
                     reactions.say("Чем занимаешься в свободное время ? (Интересы, хобби)")
                 }
+                handleStart()
+
                 state("InputInterestsResponse") {
                     activators {
                         regex(".*")
@@ -144,6 +149,8 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 action {
                     reactions.say("Расскажи немного о себе (в свободной форме)")
                 }
+                handleStart()
+
                 state("InputAboutYouInterestsResponse") {
                     activators {
                         regex(".*")
@@ -257,6 +264,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                         )
                 )
             }
+            handleStart()
 
             state("Time")
             {
@@ -361,6 +369,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                     reactions.telegram?.say("Как тебя зовут?",
                             replyMarkup = ReplyKeyboardRemove())
                 }
+                handleStart()
 
                 state("ChangeInputNameResponse") {
                     activators {
@@ -386,6 +395,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 action {
                     reactions.say("Расскажи немного о своей рабочей деятельности (кем работаешь, что делаешь и т.д.)")
                 }
+                handleStart()
 
                 state("ChangeInputWorkResponse") {
                     activators {
@@ -412,6 +422,8 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 action {
                     reactions.say("Чем занимаешься в свободное время ? (Интересы, хобби)")
                 }
+                handleStart()
+
                 state("ChangeInputInterestsResponse") {
                     activators {
                         regex(".*")
@@ -437,6 +449,8 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 action {
                     reactions.say("Расскажи немного о себе (в свободной форме)")
                 }
+                handleStart()
+
                 state("ChangeInputAboutYouInterestsResponse") {
                     activators {
                         regex(".*")
@@ -582,5 +596,16 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 resizeKeyboard = true,
                 oneTimeKeyboard = true
         )
+    }
+
+    private fun handleStart() {
+        state("HandleStart") {
+            activators {
+                regex("/start")
+            }
+            action {
+                reactions.go("/Start")
+            }
+        }
     }
 }
