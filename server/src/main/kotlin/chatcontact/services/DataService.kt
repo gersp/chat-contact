@@ -2,6 +2,7 @@ package chatcontact.services
 
 import chatcontact.api.model.*
 import chatcontact.dao.*
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -104,7 +105,7 @@ class DataService(
     }
 
     fun cleanup(telegramUserId: Long) {
-        val user = users.findByTelegramUserId(telegramUserId) ?: return
+        val user = users.findByIdOrNull(telegramUserId) ?: return
         users.delete(user)
     }
 

@@ -204,7 +204,6 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                         userId = request.clientId.toLong(),
                         telegramUserName = request.telegram?.message?.from?.username!!
                 ))
-                context.session["userId"] = user.userId
             }
         }
 
@@ -322,9 +321,9 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
             action {
                 reactions.say("Всё понял, пошел искать контакт!")
                 dataService.createMatchRequest(MatchRequestData(
-                        userId = context.session["userId"] as Long?,
-                        topicText = context.session["topic"] as String? ?: "",
-                        timeRange = context.session["time"] as TimeRestrictionData?
+                        userId = request.clientId.toLong(),
+                        topicText = "",
+                        timeRange = TimeRestrictionData(morning = true, daytime = true, evening = true, night = true, weekends = true)
                 )
                 )
                 reactions.go("/ЦиклПодбора")
@@ -371,7 +370,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                         reactions.run {
                             context.session["name"] = request.input
                             dataService.updateUser(dataService
-                                    .getUser(context.session["userId"] as Long)
+                                    .getUser(request.clientId.toLong())
                                     .copy(displayName = request.input)
                             )
                             go("/FixForm")
@@ -396,7 +395,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                         reactions.run {
                             context.session["work"] = request.input
                             dataService.updateUser(dataService
-                                    .getUser(context.session["userId"] as Long)
+                                    .getUser(request.clientId.toLong())
                                     .copy(work = request.input)
                             )
                             go("/FixForm")
@@ -421,7 +420,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                         reactions.run {
                             context.session["interest"] = request.input
                             dataService.updateUser(dataService
-                                    .getUser(context.session["userId"] as Long)
+                                    .getUser(request.clientId.toLong())
                                     .copy(interestsText = request.input)
                             )
                             go("/FixForm")
@@ -446,7 +445,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                         reactions.run {
                             context.session["aboutYou"] = request.input
                             dataService.updateUser(dataService
-                                    .getUser(context.session["userId"] as Long)
+                                    .getUser(request.clientId.toLong())
                                     .copy(aboutUser = request.input)
                             )
                             go("/FixForm")
@@ -490,7 +489,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 regex("Проверить кадидат.*")
             }
             action {
-                val userId = context.session["userId"] as Long
+                val userId = request.clientId.toLong()
                 val candidates = dataService.getCandidates(userId)
                 if (candidates.isEmpty()) {
                     reactions.telegram?.say("Список кандидатов пуст", replyMarkup = KeyboardReplyMarkup(
@@ -529,7 +528,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                     regex("Выбрать.*")
                 }
                 action {
-                    val userId = context.session["userId"] as Long
+                    val userId = request.clientId.toLong()
                     val candidate = context.session["candidate"] as CandidateData
                     dataService.setStatus(userId, candidate, MatchStatusType.liked)
                     if (candidate.contraStatus == MatchStatusType.liked) {
@@ -538,14 +537,16 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                             apiUrl = chatConfig.telegramApiUrl + "bot"
                             token = chatConfig.token
                         }.sendMessage(candidate.user!!.userId!!,
-                                "Есть контакт! Напишите своему собеседнику - @link.\n" +
+                                "Есть контакт! Напишите своему собеседнику - @${dataService.getUser(userId).telegramUserName}.\n" +
                                         " Или подождите пока он сам вам напишет.")
 
-                        reactions.say("Есть контакт! Напишите своему собеседнику - @link.\n" +
+                        reactions.say("Есть контакт! Напишите своему собеседнику - @${candidate.user!!.telegramUserName}.\n" +
                                 " Или подождите пока он сам вам напишет.")
-                    }
 
-                    reactions.go("/ЦиклПодбора")
+                        reactions.go("/SecondMenu")
+                    } else {
+                        reactions.go("/ЦиклПодбора")
+                    }
                 }
             }
             state("Dislike") {
@@ -553,7 +554,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                     regex("Пропустить.*")
                 }
                 action {
-                    val userId = context.session["userId"] as Long
+                    val userId = request.clientId.toLong()
                     val candidate = context.session["candidate"] as CandidateData
                     dataService.setStatus(userId, candidate, MatchStatusType.disliked)
                     reactions.go("/ЦиклПодбора")

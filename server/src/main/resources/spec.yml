@@ -186,6 +186,8 @@ components:
           type: string
         aboutUser:
           type: string
+        telegramUserName:
+          type: string
 
     MatchRequestData:
       properties:

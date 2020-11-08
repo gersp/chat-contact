@@ -14,7 +14,8 @@ data class User (
         val imageLink: String?,
         val interestsText: String,
         val work: String,
-        val aboutUser: String
+        val aboutUser: String,
+        val telegramUserName: String
         ) {
 
 }
@@ -23,8 +24,6 @@ interface UserRepository : JpaRepository<User, Long> {
 
     @Query("SELECT nextval('user_id_seq')", nativeQuery = true)
     fun nextId(): Long
-
-    fun findByTelegramUserId(userId: Long): User?
 
 }
 
@@ -35,7 +34,8 @@ fun User.toApiData(): UserData {
             imageLink = this.imageLink,
             interestsText = this.interestsText,
             work = this.work,
-            aboutUser = this.aboutUser
+            aboutUser = this.aboutUser,
+            telegramUserName = this.telegramUserName
     )
 }
 
@@ -46,6 +46,7 @@ fun UserData.toDBData(): User  {
             imageLink = this.imageLink,
             interestsText = this.interestsText ?: "",
             work = this.work?: "",
-            aboutUser = this.aboutUser?: ""
+            aboutUser = this.aboutUser?: "",
+            telegramUserName = this.telegramUserName!!
     )
 }
