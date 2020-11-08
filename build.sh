@@ -7,13 +7,13 @@ mvn clean install -P docker
 #           BUILD Front component
 cd front
 
-rm -Rf build
+#rm -Rf build
 #npm run generate-api
 #npm run build
 
 #           DEPLOY(copy) Front component
-rm -Rf /usr/share/nginx/html/*
-cp -R build/* /usr/share/nginx/html/
+#rm -Rf /usr/share/nginx/html/*
+#cp -R build/* /usr/share/nginx/html/
 
 #           DEPLOY(restart) Server component
 cd /opt/eventos/chatcontact-server
