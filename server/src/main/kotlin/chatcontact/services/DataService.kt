@@ -71,8 +71,8 @@ class DataService(
     }
 
     fun getCandidates(userId: Long, matchRequestId: Long): List<CandidateData> {
-        val mr = matchRequests.getOne(matchRequestId)
-        val user = users.getOne(userId)
+        val mr = matchRequests.findByIdOrNull(matchRequestId) ?: return emptyList()
+        val user = users.findByIdOrNull(userId) ?: return emptyList()
 
         val topicEm1 = embedder.getEncodings(mr.topicText)
         val interestEm1 = embedder.getEncodings(user.interestsText)
