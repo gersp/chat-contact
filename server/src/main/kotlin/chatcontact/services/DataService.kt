@@ -23,6 +23,10 @@ class DataService(
     }
 
     fun createMatchRequest(matchRequestData: MatchRequestData): MatchRequestData {
+        val p = matchRequests.findLastActiveByUser(matchRequestData.userId!!)
+        if (p != null) {
+            matchRequests.save(p.copy(active = false))
+        }
         val d = matchRequestData.copy(matchRequestId = matchRequests.nextId()).toDBData()
         matchRequests.save(d)
         return d.toApiData()
