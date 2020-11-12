@@ -74,7 +74,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
             }
         }
 
-        state("Form", modal = true) {
+        state("Form") {
             activators {
                 regex("/form")
                 regex("Всё понятно, готов начать!")
@@ -89,13 +89,10 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 action {
                     reactions.telegram?.say("Как тебя зовут?",
                             replyMarkup = ReplyKeyboardRemove())
+                    reactions.go("/CatchAnyText", "/Form/InputName/InputNameResponse")
                 }
 
-                handleStart()
                 state("InputNameResponse") {
-                    activators {
-                        regex(".*")
-                    }
                     action {
                         reactions.run {
                             context.session["name"] = request.input
@@ -105,17 +102,15 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 }
             }
 
+
+
             state("InputWork") {
                 action {
                     reactions.say("Расскажи немного о своей рабочей деятельности (кем работаешь, что делаешь и т.д.)")
+                    reactions.go("/CatchAnyText", "/Form/InputWork/InputWorkResponse")
                 }
 
-                handleStart()
-
                 state("InputWorkResponse") {
-                    activators {
-                        regex(".*")
-                    }
                     action {
                         reactions.run {
                             context.session["work"] = request.input
@@ -125,17 +120,16 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 }
             }
 
+
+
             state("InputInterests")
             {
                 action {
                     reactions.say("Чем занимаешься в свободное время ? (Интересы, хобби)")
+                    reactions.go("/CatchAnyText", "/Form/InputInterests/InputInterestsResponse")
                 }
-                handleStart()
 
                 state("InputInterestsResponse") {
-                    activators {
-                        regex(".*")
-                    }
                     action {
                         reactions.run {
                             context.session["interest"] = request.input
@@ -145,16 +139,16 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 }
             }
 
+
+
+
             state("InputAboutYou") {
                 action {
                     reactions.say("Расскажи немного о себе (в свободной форме)")
+                    reactions.go("/CatchAnyText", "/Form/InputAboutYou/InputAboutYouResponse")
                 }
-                handleStart()
 
-                state("InputAboutYouInterestsResponse") {
-                    activators {
-                        regex(".*")
-                    }
+                state("InputAboutYouResponse") {
                     action {
                         reactions.run {
                             context.session["aboutYou"] = request.input
@@ -162,8 +156,10 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                         }
                     }
                 }
-
             }
+
+
+
         }
 
         state("SecondMenu") {
@@ -263,14 +259,11 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                                 resizeKeyboard = true
                         )
                 )
+                reactions.go("/CatchAnyText", "/Topic/Time")
             }
-            handleStart()
 
             state("Time")
             {
-                activators {
-                    regex(".*")
-                }
                 action {
                     reactions.run {
                         reactions.telegram?.say(
@@ -368,13 +361,11 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 action {
                     reactions.telegram?.say("Как тебя зовут?",
                             replyMarkup = ReplyKeyboardRemove())
+                    reactions.go("/CatchAnyText",
+                            "/FixForm/ChangeInputName/ChangeInputNameResponse")
                 }
-                handleStart()
 
                 state("ChangeInputNameResponse") {
-                    activators {
-                        regex(".*")
-                    }
                     action {
                         reactions.run {
                             context.session["name"] = request.input
@@ -394,13 +385,12 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 }
                 action {
                     reactions.say("Расскажи немного о своей рабочей деятельности (кем работаешь, что делаешь и т.д.)")
+                    reactions.go("/CatchAnyText",
+                            "/FixForm/ChangeInputWork/ChangeInputWorkResponse")
                 }
-                handleStart()
 
                 state("ChangeInputWorkResponse") {
-                    activators {
-                        regex(".*")
-                    }
+
                     action {
                         reactions.run {
                             context.session["work"] = request.input
@@ -421,13 +411,11 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 }
                 action {
                     reactions.say("Чем занимаешься в свободное время ? (Интересы, хобби)")
+                    reactions.go("/CatchAnyText",
+                            "/FixForm/ChangeInputInterests/ChangeInputInterestsResponse")
                 }
-                handleStart()
 
                 state("ChangeInputInterestsResponse") {
-                    activators {
-                        regex(".*")
-                    }
                     action {
                         reactions.run {
                             context.session["interest"] = request.input
@@ -448,13 +436,11 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                 }
                 action {
                     reactions.say("Расскажи немного о себе (в свободной форме)")
+                    reactions.go("/CatchAnyText",
+                            "/FixForm/ChangeInputAboutYou/ChangeInputAboutYouResponse")
                 }
-                handleStart()
 
-                state("ChangeInputAboutYouInterestsResponse") {
-                    activators {
-                        regex(".*")
-                    }
+                state("ChangeInputAboutYouResponse") {
                     action {
                         reactions.run {
                             context.session["aboutYou"] = request.input
@@ -576,6 +562,12 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
             }
         }
 
+        state("CatchAnyText", modal = true) {
+            fallback {
+                reactions.goBack(request.input)
+            }
+        }
+
         state("NoMatch", noContext = true) {
             activators {
                 catchAll()
@@ -585,7 +577,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
             }
         }
     }
-    
+
     private fun stopButton(): KeyboardReplyMarkup {
         return KeyboardReplyMarkup(
                 listOf(
