@@ -32,7 +32,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
             }
         }
 
-        state("FirstMenu", modal = true) {
+        state("FirstMenu") {
             action {
                 reactions.telegram?.say("Для начала надо заполнить анкету! " +
                         "Она будет показываться другим участникам Chat Contact при подборе собеседника для вас.",
@@ -540,7 +540,7 @@ class ContactBot(private val dataService: DataService, val chatConfig: ChatConfi
                                 "Есть контакт! Напишите своему собеседнику - @${dataService.getUser(userId).telegramUserName}.\n" +
                                         " Или подождите пока он сам вам напишет.")
 
-                        reactions.say("Есть контакт! Напишите своему собеседнику - @${candidate.user!!.telegramUserName}.\n" +
+                        reactions.say("Есть контакт! Напишите своему собеседнику - @${candidate.user.telegramUserName}.\n" +
                                 " Или подождите пока он сам вам напишет.")
 
                         reactions.go("/SecondMenu")
